@@ -83,6 +83,6 @@ export function putFetch(obj: TodoRequest){
                 throw new Error(`Status: ${response.status}`)
             }
             return response.json() as Promise< MetaResponse <Todo,TodoInfo> >
-      })
+      }) 
 
   }
