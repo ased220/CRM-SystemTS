@@ -1,8 +1,8 @@
 interface TodoRequest { 
 	title?: string;
  	isDone?: boolean;  // изменение статуса задачи происходит через этот флаг
-    id?:number;
-    created?: string;
+  id?:number;
+  created?: string;
 
  } 
 // или так type TodoRequest = Partial<Omit<Todo, "id" | "created">>;
