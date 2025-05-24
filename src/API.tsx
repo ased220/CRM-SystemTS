@@ -76,13 +76,22 @@ export function putFetch(obj: TodoRequest){
       .catch(error => console.error(error))
   } 
 
-  export function filterFetch(status: TodoInfoCheck){
-      fetch(`https://easydev.club/api/v1/todos?${status}`, {method: 'GET'})
-      .then(response => {
-            if (!response.ok){
-                throw new Error(`Status: ${response.status}`)
-            }
-            return response.json() as Promise< MetaResponse <Todo,TodoInfo> >
-      }) 
+export function filterFetch(status: TodoInfoCheck): Promise<MetaResponse<Todo, TodoInfo>> {
+  return (
+    fetch(`https://easydev.club/api/v1/todos?filter=${status}`, { method: 'GET' })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      return data;
+    })
+    .catch(error => {
+      console.error(error);
+    })
+  )
+}
 
-  }
+  
