@@ -1,5 +1,6 @@
 import InputTask from "./components/InputTasks"
 import Item from "./components/Item"
+import ListItem from "./components/ListItem"
 
 
 function App() {
@@ -8,6 +9,7 @@ function App() {
     <>
       <InputTask/>
       <Item/>
+      <ListItem/>
     </>
   )
 }
