@@ -1,19 +1,28 @@
-import { putFetch } from '../API'
+import { deleteFetch, putFetch, type Todo } from '../API'
 import deleteIcon from '../assets/delete.svg'
 import EditIcon from '../assets/edit.svg'
 
-const obj = {
-    id: 6719,
-      title: 'fsdfsd1c  dw fw wf' ,
-      created: '2025-05-23T05:17:50.73614Z',
-      isDone: true
-}
-const onChancgeIsDone = () => {
-    obj.isDone = !obj.isDone
-    putFetch( obj )
+
+interface ItemProps {
+    obj:Todo;
+    reloadList: () => void;
 }
 
-export default function Item (){
+export default function Item ({obj, reloadList}: ItemProps ){ 
+
+    const onChancgeIsDone = () => {
+        obj.isDone = !obj.isDone
+        putFetch( obj )
+    }
+
+    const onClickDelete = async (id:number) =>{
+        try {
+            await deleteFetch(id)
+            reloadList();
+        }catch{
+            console.error('Error: ну не судьба удалить')
+        }
+    }
     return (
          <div className='list'>
             {
@@ -24,11 +33,11 @@ export default function Item (){
                     )
             }
             <p>{obj.title}</p>    
-            <img src={EditIcon} className='btnList'
+            <img src={EditIcon} className='btnList' style={{width: '30px', height: '30px'}}
                 // onClick = {() =>}  //setEdit({id: obj.id, swap: false}) 
             />
-            <img src={deleteIcon} className='btnList'
-                // onClick = {() => onClickDelete(obj.id)}
+            <img src={deleteIcon} className='btnList'  style={{width: '30px', height: '30px'}}
+                onClick = {() => onClickDelete(obj.id)}
             />
          </div>
     )
