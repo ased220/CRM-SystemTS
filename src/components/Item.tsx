@@ -23,9 +23,6 @@ export default function Item ({Task, reloadList}: ItemProps ){
         } catch (error) {
             console.error(error);
         }
-        //   deleteFetch(id)
-        // setTimeout(() => reloadList(),120)
-        // C таймаутом все отрабатывает нормально
     }
     return (
          <div className='list'>

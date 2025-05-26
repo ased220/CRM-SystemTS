@@ -35,62 +35,73 @@ type requestOptions = {
 
 type TodoInfoCheck = 'all' | 'completed' | 'inWork'
 
-export function postFetch(obj: TodoRequest){
+export async function postFetch(obj: TodoRequest){
     const requestOptions: requestOptions = {
       method: 'POST',
       body: JSON.stringify(obj)
     }
 
+    try {
+      const response = await fetch('https://easydev.club/api/v1/todos', requestOptions)
+      if (!response.ok){ throw new Error(`Status: ${response.status}`) }
+      
+      return response.json() as Promise<Todo>
 
-    fetch('https://easydev.club/api/v1/todos', requestOptions)
-      .then(response => {
-        if (!response.ok){ throw new Error(`Status: ${response.status}`) }
-        return response.json() as Promise<Todo>
-      })
-      .catch(error => console.error(error))
+    } catch (error) {
+      console.error(error)
+    }
   }
 
-export function putFetch(obj: TodoRequest){
+export async function putFetch(obj: TodoRequest){
     const requestOptions: requestOptions = {
         method: 'PUT',
         body: JSON.stringify(obj)
     }
     
+    try {
+      const response = await fetch(`https://easydev.club/api/v1/todos/${obj.id}`, requestOptions)
 
-    fetch(`https://easydev.club/api/v1/todos/${obj.id}`, requestOptions)
-      .then(response => {
-        if (!response.ok){ throw new Error(`Status: ${response.status}`) } 
-      })
+      if (!response.ok){ throw new Error(`Status: ${response.status}`) } 
 
-      .catch(error => console.error(error))
+    } catch (error) {
+
+      console.error(error)
+    }
   }
 
-  export function deleteFetch(id: number) {
+  export async function deleteFetch(id: number) {
 
-    fetch(`https://easydev.club/api/v1/todos/${id}`, {method: 'DELETE'})
-      .then(response => {
-        if (!response.ok){
-          throw new Error(`Status: ${response.status}`)
+    try {
+
+      const response = await fetch(`https://easydev.club/api/v1/todos/${id}`, {method: 'DELETE'});
+
+      if (!response.ok){
+          throw new Error('Error')
         }
-        return ; //response.json() SyntaxError: Failed to execute 'json' on 'Response': Unexpected end of JSON input
-      })
-      .catch(error => console.error(error))
+
+      return ;
+
+    } catch (error) {
+        console.error(error)
+    }
+    
   } 
 
-  export function filterFetch(status: TodoInfoCheck): Promise<MetaResponse<Todo, TodoInfo>> {
-  return (
-    fetch(`https://easydev.club/api/v1/todos?filter=${status}`, { method: 'GET' })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`Status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(data => {
-      return data;
-    })
-    .catch(error => {
+  export async function filterFetch(status: TodoInfoCheck): Promise<MetaResponse<Todo, TodoInfo>> {
+  
+    try {
+
+        const response = await fetch(`https://easydev.club/api/v1/todos?filter=${status}`, { method: 'GET' });
+
+        if (!response.ok) {
+          throw new Error(`Status: ${response.status}`);
+        }
+
+        return await response.json();
+
+    } catch (error) {
+
       console.error(error);
-    })
-  )
+      throw error;
+    }
 }
