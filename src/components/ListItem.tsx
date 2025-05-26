@@ -1,30 +1,14 @@
-import { useEffect, useState } from "react"
-import { filterFetch, type Todo } from "../API"
+
+import type { Todo } from "../API"
 import Item from "./Item"
 
+type Tasks = {
+    Tasks:Array <Todo>;
+    reloadList: () => void;
+}
+export default function List({Tasks, reloadList}: Tasks){
 
-export default function List(){
 
-    type Status = 'all' | 'completed' | 'inWork'
-
-    const [statusList, setStatusList] = useState<Status>('all')
-    const [Tasks, setTasks] = useState<Array <Todo>>([])
-    
-    // const [reload, setReload] = useState(0)
-
-    useEffect(() => {
-        
-        filterFetch(statusList)
-        .then(response => setTasks(response.data))
-
-        
-    },[statusList])
-    
-    const reloadList = () => {
-        filterFetch(statusList)
-        .then(response => setTasks(response.data))
-        .catch( () => console.error('Error: Проблема с обновлением данных'))
-    }
     
     return (
         <>
