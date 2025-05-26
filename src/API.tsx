@@ -72,6 +72,7 @@ export function putFetch(obj: TodoRequest){
         if (!response.ok){
           throw new Error(`Status: ${response.status}`)
         }
+        return ; //response.json() SyntaxError: Failed to execute 'json' on 'Response': Unexpected end of JSON input
       })
       .catch(error => console.error(error))
   } 

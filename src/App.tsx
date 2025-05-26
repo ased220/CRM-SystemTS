@@ -19,15 +19,14 @@ function App() {
         
     },[]);
 
-    const reloadList = () => {
-        filterFetch('all')
-        .then(response => setTasks(response.data))
-        .catch( () => console.error('Error: Проблема с обновлением данных'))
-    }
+    const reloadList = async() => {
+      const response = await filterFetch('all')
+      setTasks(response.data)
+    }  
 
   return (
     <>
-      <InputTask/>
+      <InputTask reloadList = {reloadList}/>
       <ListItem Tasks = {Tasks} reloadList = {reloadList}/>
     </>
   )

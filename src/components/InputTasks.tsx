@@ -1,10 +1,15 @@
 import { useState } from "react";
 import { postFetch } from "../API";
 
-export default function InputTask( ) {
+interface inputTaskProps {
+    reloadList: () => void
+}
+
+export default function InputTask( {reloadList}: inputTaskProps ) {
 
   const [inputValue, setInputValue] = useState('');
   const [inputError, setIputError] = useState('');
+
   const onClick = () =>{
     if (inputValue.length >= 2 && inputValue.length <= 64 ){
 
@@ -12,6 +17,7 @@ export default function InputTask( ) {
                   title : inputValue,
                   isDone: false,
               })
+              reloadList()
               setIputError('')
       } else {
           setIputError('Error')            

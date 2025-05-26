@@ -2,12 +2,12 @@
 import type { Todo } from "../API"
 import Item from "./Item"
 
-type Tasks = {
-    Tasks:Array <Todo>;
+interface ListProps {
+    Tasks: Array<Todo>;
     reloadList: () => void;
 }
-export default function List({Tasks, reloadList}: Tasks){
 
+export default function List({Tasks, reloadList}: ListProps){
 
     
     return (
@@ -15,7 +15,7 @@ export default function List({Tasks, reloadList}: Tasks){
         {
             Tasks.map((obj)=>{
                
-                return <Item key={obj.id} obj={obj} reloadList={reloadList} />              
+                return <Item key={obj.id} Task={obj} reloadList={reloadList} />              
             })
             
         }   

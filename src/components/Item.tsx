@@ -4,40 +4,44 @@ import EditIcon from '../assets/edit.svg'
 
 
 interface ItemProps {
-    obj:Todo;
+    Task:Todo;
     reloadList: () => void;
 }
 
-export default function Item ({obj, reloadList}: ItemProps ){ 
+export default function Item ({Task, reloadList}: ItemProps ){ 
 
     const onChancgeIsDone = () => {
-        obj.isDone = !obj.isDone
-        putFetch( obj )
+        Task.isDone = !Task.isDone
+        putFetch( Task )
+        reloadList()
     }
 
     const onClickDelete = async (id:number) =>{
         try {
             await deleteFetch(id)
-            reloadList();
-        }catch{
-            console.error('Error: ну не судьба удалить')
+            reloadList()
+        } catch (error) {
+            console.error(error);
         }
+        //   deleteFetch(id)
+        // setTimeout(() => reloadList(),120)
+        // C таймаутом все отрабатывает нормально
     }
     return (
          <div className='list'>
             {
-                obj.isDone? ( 
+                Task.isDone? ( 
                     <input className='inpCheck' type="checkbox" checked onChange={() => onChancgeIsDone() } /> 
                     ):(
                     <input className='inpCheck' type="checkbox" checked = {false} onChange={() => onChancgeIsDone()} />
                     )
             }
-            <p>{obj.title}</p>    
+            <p>{Task.title}</p>    
             <img src={EditIcon} className='btnList' style={{width: '30px', height: '30px'}}
-                // onClick = {() =>}  //setEdit({id: obj.id, swap: false}) 
+                // onClick = {() =>}  //setEdit({id: Task.id, swap: false}) 
             />
             <img src={deleteIcon} className='btnList'  style={{width: '30px', height: '30px'}}
-                onClick = {() => onClickDelete(obj.id)}
+                onClick = {() => onClickDelete(Task.id)}
             />
          </div>
     )
