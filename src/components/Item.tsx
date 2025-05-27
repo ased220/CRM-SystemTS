@@ -94,10 +94,7 @@ export default function Item ({Task, reloadList, edit, setEdit}: ItemProps ){
                 )
             
             }
-                <p>{Task.title}</p>    
-                <img src={EditIcon} className='btnList' style={{width: '30px', height: '30px'}}
-                    onClick = {() => setEdit({id: Task.id, swap: false})}   
-                />
+
             
                 <img src={deleteIcon} className='btnList'  style={{width: '30px', height: '30px'}}
                     onClick = {() => onClickDelete(Task.id)}
