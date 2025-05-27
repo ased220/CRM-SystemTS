@@ -87,13 +87,20 @@ export async function putFetch(obj: TodoRequest){
     
   } 
 
-  export function filterFetch(status: TodoInfoCheck){
-      fetch(`https://easydev.club/api/v1/todos?${status}`, {method: 'GET'})
-      .then(response => {
-            if (!response.ok){
-                throw new Error(`Status: ${response.status}`)
-            }
-            return response.json() as Promise< MetaResponse <Todo,TodoInfo> >
-      }) 
+  export async function filterFetch(status: TodoInfoCheck){
+
+      try {
+        const response = await fetch(`https://easydev.club/api/v1/todos?${status}`, {method: 'GET'})
+        
+        if (!response.ok){
+          throw new Error(`Status: ${response.status}`)
+        }
+        
+        return await response.json() as Promise< MetaResponse <Todo,TodoInfo>>
+      } catch (error) {
+    
+        console.error(error)
+    }
+    
 
   }

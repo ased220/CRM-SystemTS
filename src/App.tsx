@@ -13,7 +13,7 @@ function App() {
 
     useEffect(() => {
         
-      filterFetch('all')
+    filterFetch('all')
       .then(response => setTasks(response.data))
 
         
