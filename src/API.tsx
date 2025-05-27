@@ -1,5 +1,4 @@
-
-export interface TodoRequest { 
+interface TodoRequest { 
 	title?: string;
  	isDone?: boolean;  // изменение статуса задачи происходит через этот флаг
   id?:number;
@@ -88,23 +87,13 @@ export async function putFetch(obj: TodoRequest){
     
   } 
 
-  export async function filterFetch(status: TodoInfoCheck): Promise<MetaResponse<Todo, TodoInfo>> {
-  
-    try {
+  export function filterFetch(status: TodoInfoCheck){
+      fetch(`https://easydev.club/api/v1/todos?${status}`, {method: 'GET'})
+      .then(response => {
+            if (!response.ok){
+                throw new Error(`Status: ${response.status}`)
+            }
+            return response.json() as Promise< MetaResponse <Todo,TodoInfo> >
+      }) 
 
-        const response = await fetch(`https://easydev.club/api/v1/todos?filter=${status}`, { method: 'GET' });
-
-        if (!response.ok) {
-          throw new Error(`Status: ${response.status}`);
-        }
-
-        return await response.json();
-
-    } catch (error) {
-
-      console.error(error);
-      throw error;
-    }
-}
-
-  
+  }
