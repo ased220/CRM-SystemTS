@@ -91,7 +91,7 @@ export async function putFetch(obj: TodoRequest){
   export async function filterFetch(status: TodoInfoCheck){
 
       try {
-        const response = await fetch(`https://easydev.club/api/v1/todos?${status}`, {method: 'GET'})
+        const response = await fetch(`https://easydev.club/api/v1/todos?filter=${status}`, {method: 'GET'})
         
         if (!response.ok){
           throw new Error(`Status: ${response.status}`)
