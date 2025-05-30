@@ -14,13 +14,13 @@ export interface Todo {
 	isDone: boolean; 
 }
 
-interface TodoInfo { 
+export interface TodoInfo { 
 	all: number
 	completed: number
 	inWork: number
 }
 
-interface MetaResponse<T, N> {
+export interface MetaResponse<T, N> {
 	data: T[]
 	info?: N
 	meta: {
@@ -28,12 +28,13 @@ interface MetaResponse<T, N> {
 	}
 }
 
+
 type requestOptions = {
     method:string
     body:string
 }
 
-type TodoInfoCheck = 'all' | 'completed' | 'inWork'
+export type TodoInfoCheck = 'all' | 'completed' | 'inWork'
 
 export async function postFetch(obj: TodoRequest){
     const requestOptions: requestOptions = {
