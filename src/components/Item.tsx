@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { deleteFetch, putFetch, type Todo } from '../API'
+import { deleteFetch, putFetch } from '../API'
 import deleteIcon from '../assets/delete.svg'
 import EditIcon from '../assets/edit.svg'
 
+import type { Todo } from '../types/Interface';
 
 interface ItemProps {
     Task:Todo;
@@ -10,12 +11,9 @@ interface ItemProps {
     edit: { id: number; swap: boolean };
     setEdit: React.Dispatch<React.SetStateAction<{id: number, swap:boolean}>>;
 }
-
 export default function Item ({Task, reloadList, edit, setEdit}: ItemProps ){ 
-
     const [inputError, setIputError] = useState('');
     const [changeTitle, setChangeTitle] = useState('')
-
     const onChancgeIsDone = async() => {
         try {
             Task.isDone = !Task.isDone
@@ -24,7 +22,6 @@ export default function Item ({Task, reloadList, edit, setEdit}: ItemProps ){
         } catch (error) {
             console.error(error);
         }
-        
     }
 
     const onClickDelete = async (id:number) =>{

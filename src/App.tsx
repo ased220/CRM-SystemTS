@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react"
 import InputTask from "./components/InputTasks"
 import ListItem from "./components/ListItem"
-import { filterFetch, type Todo, type TodoInfo, type MetaResponse, type TodoInfoCheck } from "./API"
+import { filterFetch } from "./API"
+import type { Todo, TodoInfo, MetaResponse, TodoInfoCheck} from "./types/Interface"
 import StateWork from "./components/StateWork"
 import { BrowserRouter, Route, Routes } from "react-router"
+
 
 
 function App() {
