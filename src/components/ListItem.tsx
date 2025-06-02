@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import type { Todo } from "../API"
+import type { Todo } from "../types/Interface"
 import Item from "./Item"
 
 interface ListProps {

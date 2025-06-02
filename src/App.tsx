@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react"
 import InputTask from "./components/InputTasks"
 import ListItem from "./components/ListItem"
-import { filterFetch, type Todo } from "./API"
+import { filterFetch } from "./API"
+import type { Todo } from "./types/Interface"
 
 
 function App() {
 
-      // type Status = 'all' | 'completed' | 'inWork'
-  
-    // const [statusList, setStatusList] = useState<Status>('all')
     const [Tasks, setTasks] = useState<Array <Todo>>([])
 
     useEffect(() => {
