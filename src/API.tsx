@@ -1,40 +1,4 @@
-
-export interface TodoRequest { 
-	title?: string;
- 	isDone?: boolean;  // изменение статуса задачи происходит через этот флаг
-  id?:number;
-  created?: string;
-
- } 
-// или так type TodoRequest = Partial<Omit<Todo, "id" | "created">>;
-
-export interface Todo { 
-	id: number;
-	title: string;
-	created: string; // ISO date string 
-	isDone: boolean; 
-}
-
-interface TodoInfo { 
-	all: number
-	completed: number
-	inWork: number
-}
-
-interface MetaResponse<T, N> {
-	data: T[]
-	info?: N
-	meta: {
-		totalAmount: number
-	}
-}
-
-type requestOptions = {
-    method:string
-    body:string
-}
-
-type TodoInfoCheck = 'all' | 'completed' | 'inWork'
+import type { MetaResponse, requestOptions, Todo, TodoInfo, TodoInfoCheck, TodoRequest } from "./types/types"
 
 export async function postFetch(obj: TodoRequest){
     const requestOptions: requestOptions = {
@@ -88,7 +52,7 @@ export async function putFetch(obj: TodoRequest){
     
   } 
 
-  export async function filterFetch(status: TodoInfoCheck): Promise<MetaResponse<Todo, TodoInfo>> {
+  export async function filterFetch(status: TodoInfoCheck): Promise<MetaResponse<Todo, TodoInfo >> {
   
     try {
 
