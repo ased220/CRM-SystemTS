@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { deleteFetch, putFetch } from '../API'
 import deleteIcon from '../assets/delete.svg'
 import EditIcon from '../assets/edit.svg'
-import type { Todo } from '../types/Interface';
 
+import type { Todo } from '../types/Interface';
 
 interface ItemProps {
     Task:Todo;
