@@ -52,23 +52,18 @@ export async function putFetch(obj: TodoRequest){
     
   } 
 
-  export async function filterFetch(status: TodoInfoCheck): Promise<MetaResponse<Todo, TodoInfo >> {
-  
-    try {
-
-        const response = await fetch(`https://easydev.club/api/v1/todos?filter=${status}`, { method: 'GET' });
-
-        if (!response.ok) {
-          throw new Error(`Status: ${response.status}`);
+      try {
+        const response = await fetch(`https://easydev.club/api/v1/todos?filter=${status}`, {method: 'GET'})
+        
+        if (!response.ok){
+          throw new Error(`Status: ${response.status}`)
         }
-
-        return await response.json();
-
-    } catch (error) {
-
-      console.error(error);
-      throw error;
+        
+        return await response.json() as Promise< MetaResponse <Todo,TodoInfo>>
+      } catch (error) {
+    
+        console.error(error)
     }
-}
+    
 
-  
+  }
