@@ -1,4 +1,4 @@
-import { useState } from "react";
+    import { useState } from "react";
 import { postFetch } from "../API";
 
 interface inputTaskProps {
@@ -10,20 +10,25 @@ export default function InputTask( {reloadList}: inputTaskProps ) {
   const [inputValue, setInputValue] = useState('');
   const [inputError, setIputError] = useState('');
 
-  const onClick = () =>{
-    if (inputValue.length >= 2 && inputValue.length <= 64 ){
+    const onClick = async() =>{
+        try{
 
-              postFetch({
-                  title : inputValue,
-                  isDone: false,
-              })
-              reloadList()
-              setIputError('')
-      } else {
-          setIputError('Error')            
-      }
-      setInputValue('')
-  }
+            
+            if (inputValue.length >= 2 && inputValue.length <= 64 ){
+                await postFetch({
+                    title : inputValue,
+                    isDone: false,
+                })
+                reloadList()
+                setIputError('')
+            } else {
+                setIputError('Error')            
+            }
+            setInputValue('')
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
   return (
     <div className="inputTask">

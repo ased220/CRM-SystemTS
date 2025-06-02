@@ -37,7 +37,7 @@ export default function Item ({Task, reloadList, edit, setEdit}: ItemProps ){
         }
     }
 
-    const editTitle = (id:number ) =>{
+    const editTitleInput = (id:number ) =>{
          if (changeTitle.length >= 2 && changeTitle.length <= 64 ){
 
             setEdit({id: id, swap: true})
@@ -49,8 +49,12 @@ export default function Item ({Task, reloadList, edit, setEdit}: ItemProps ){
         } else {
             setIputError('Error')            
         }
+    
         
-        
+    }
+    const editTitleText = () =>{
+        setEdit({id: Task.id, swap: false})
+        // setChangeTitle(event.target)
     }
     return (
          <div className='list'>
@@ -80,7 +84,7 @@ export default function Item ({Task, reloadList, edit, setEdit}: ItemProps ){
                                 { inputError == 'Error'? <p className='errorText'> Введите значение от 2 до 64 </p>: ''}
                             </div>
                             
-                            <button className='btnList' onClick={ () => editTitle( Task.id ) }> 	&#10004; </button>
+                            <button className='btnList' onClick={ () => editTitleInput( Task.id ) }> 	&#10004; </button>
                             <button className='btnList' onClick={ () => setEdit({id: Task.id, swap: true}) }> 	&#10006; </button>
                         </>
                     )  
@@ -89,7 +93,7 @@ export default function Item ({Task, reloadList, edit, setEdit}: ItemProps ){
                     <>
                         <p>{Task.title}</p>    
                         <img src={EditIcon} className='btnList'
-                            onClick = {() => setEdit({id: Task.id, swap: false}) }
+                            onClick = {() => editTitleText()}
                         />
                     </>
                 )
@@ -97,7 +101,7 @@ export default function Item ({Task, reloadList, edit, setEdit}: ItemProps ){
             }
 
             
-                <img src={deleteIcon} className='btnList'  style={{width: '30px', height: '30px'}}
+                <img src={deleteIcon} className='btnList'
                     onClick = {() => onClickDelete(Task.id)}
                 />
          </div>
