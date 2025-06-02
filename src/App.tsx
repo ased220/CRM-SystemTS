@@ -1,16 +1,65 @@
-import { filterFetch } from "./API";
+import { useEffect, useState } from "react"
+import InputTask from "./components/InputTasks"
+import ListItem from "./components/ListItem"
+import { filterFetch, type Todo, type TodoInfo, type MetaResponse, type TodoInfoCheck } from "./API"
+import StateWork from "./components/StateWork"
+import { BrowserRouter, Route, Routes } from "react-router"
 
 
 function App() {
+    
+    const [status, setStatus] = useState<TodoInfoCheck>('all')
 
-  filterFetch('completed')
-  .then(response => {
-    console.log('Total amount:', response);
-  })
-  .catch(error => console.error('Ошибка запроса:', error));
+    const [statusList, setStatusList] = useState<TodoInfo>({
+      all: 0,
+      completed: 0,
+      inWork: 0
+    })
+    const [Tasks, setTasks] = useState<Array <Todo>>([])
+
+    useEffect(() => {
+    
+    filterFetch(status)
+      .then( (response?: MetaResponse<Todo,TodoInfo>) => {
+        if (response){
+
+          setTasks( response.data); 
+          if (response.info){
+            setStatusList(response.info)
+          }
+        }
+        
+      }
+      )
+      .catch(error => console.error(error))
+        
+    },[status]);
+
+    const reloadList = async() => {
+      const response = await filterFetch(status)
+      if (response){
+          console.log(response);
+          
+          setTasks( response.data); 
+          if (response.info){
+            setStatusList(response.info)
+          }
+      }
+
+    }  
+
+
   return (
     <>
-
+    <BrowserRouter>
+      <InputTask reloadList = {reloadList}/>
+      <StateWork statusList = {statusList} setStatus= {setStatus} reloadList = { reloadList }/>
+      {/* <ListItem Tasks = {Tasks} reloadList = {reloadList}/> */}
+    
+      <Routes>
+        <Route path = '*' element = { <ListItem Tasks = {Tasks} reloadList = {reloadList}/> }/>
+      </Routes>
+    </BrowserRouter>
     </>
   )
 }
