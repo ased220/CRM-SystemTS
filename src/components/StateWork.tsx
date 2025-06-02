@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { TodoInfo, TodoInfoCheck } from "../API";
+import type { TodoInfo, TodoInfoCheck } from "../types/Interface";
 import { Link } from "react-router";
 
 interface Props{
