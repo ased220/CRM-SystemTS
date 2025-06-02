@@ -65,6 +65,5 @@ export async function putFetch(obj: TodoRequest){
     
         console.error(error)
     }
-      
-
+    
   }
