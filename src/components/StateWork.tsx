@@ -5,12 +5,11 @@ import { Link } from "react-router";
 interface Props{
     statusList:TodoInfo
     setStatus: React.Dispatch<React.SetStateAction<TodoInfoCheck>>
-    reloadList: () => void
 }
 
 type setStatus = '/' | '/atWork' | '/done'
 
-export default function StateWork({statusList, setStatus, reloadList }:Props){
+export default function StateWork({statusList, setStatus }:Props){
     const [activeLink, setActiveLink] = useState('/')
 
 
@@ -25,7 +24,7 @@ export default function StateWork({statusList, setStatus, reloadList }:Props){
             onClick={() => {
                 changeStyle('/') 
                 setStatus("all")
-                reloadList()
+                
                 }
             }
           >{ `Все (${statusList.all})` }</Link>
@@ -35,7 +34,7 @@ export default function StateWork({statusList, setStatus, reloadList }:Props){
             onClick={() =>{ 
                 changeStyle('/atWork')
                 setStatus("inWork")
-                reloadList()
+                
                 }
             }
           > { `В процессе (${statusList.inWork})` }</Link>
@@ -45,7 +44,7 @@ export default function StateWork({statusList, setStatus, reloadList }:Props){
             onClick={() => {
                 changeStyle('/done')
                 setStatus("completed")
-                reloadList()
+                
                 }
             }
           > { `Готово (${statusList.completed})` } </Link>

@@ -11,6 +11,7 @@ interface ItemProps {
     edit: { id: number; swap: boolean };
     setEdit: React.Dispatch<React.SetStateAction<{id: number, swap:boolean}>>;
 }
+
 export default function Item ({Task, reloadList, edit, setEdit}: ItemProps ){ 
     const [inputError, setIputError] = useState('');
     const [changeTitle, setChangeTitle] = useState('')

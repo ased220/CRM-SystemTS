@@ -21,19 +21,19 @@ function App() {
 
     useEffect(() => {
     
-    filterFetch(status)
-      .then( (response?: MetaResponse<Todo,TodoInfo>) => {
-        if (response){
+      filterFetch(status)
+        .then( (response?: MetaResponse<Todo,TodoInfo>) => {
+          if (response){
 
-          setTasks( response.data); 
-          if (response.info){
-            setStatusList(response.info)
+            setTasks( response.data); 
+            if (response.info){
+              setStatusList(response.info)
+            }
           }
+          
         }
-        
-      }
-      )
-      .catch(error => console.error(error))
+        )
+        .catch(error => console.error(error))
         
     },[status]);
 
@@ -55,11 +55,12 @@ function App() {
     <>
     <BrowserRouter>
       <InputTask reloadList = {reloadList}/>
-      <StateWork statusList = {statusList} setStatus= {setStatus} reloadList = { reloadList }/>
-      {/* <ListItem Tasks = {Tasks} reloadList = {reloadList}/> */}
-    
+      <StateWork statusList = {statusList} setStatus= {setStatus}/>
+
       <Routes>
-        <Route path = '*' element = { <ListItem Tasks = {Tasks} reloadList = {reloadList}/> }/>
+        <Route path = '/' element = { <ListItem Tasks = {Tasks} reloadList = {reloadList}/> }/>
+        <Route path = '/atWork' element = { <ListItem Tasks = {Tasks} reloadList = {reloadList}/> }/>
+        <Route path = 'done' element = { <ListItem Tasks = {Tasks} reloadList = {reloadList}/> }/>
       </Routes>
     </BrowserRouter>
     </>
