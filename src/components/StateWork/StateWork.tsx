@@ -1,6 +1,7 @@
 import { useState } from "react";
-import type { TodoInfo, TodoInfoCheck } from "../types/Interface";
 import { Link } from "react-router";
+import type { TodoInfo, TodoInfoCheck } from "../../types/Interface";
+import styles from './stateWork.module.scss'
 
 interface Props{
     statusList:TodoInfo
@@ -18,9 +19,9 @@ export default function StateWork({statusList, setStatus }:Props){
     }
     return (
         
-        <div className='link'>
+        <div className={styles.link}>
           <Link to='/' 
-            id={ activeLink == '/'? 'active': ' '}
+            className={ activeLink == '/'? styles.active: ''}
             onClick={() => {
                 changeStyle('/') 
                 setStatus("all")
@@ -30,7 +31,7 @@ export default function StateWork({statusList, setStatus }:Props){
           >{ `Все (${statusList.all})` }</Link>
 
           <Link to='/atWork'
-            id={ activeLink == '/atWork'? 'active': ''}
+            className={ activeLink == '/atWork'? styles.active : ''}
             onClick={() =>{ 
                 changeStyle('/atWork')
                 setStatus("inWork")
@@ -40,7 +41,7 @@ export default function StateWork({statusList, setStatus }:Props){
           > { `В процессе (${statusList.inWork})` }</Link>
 
           <Link to='/done'
-            id={ activeLink == '/done'? 'active': ''}
+            className={ activeLink == '/done'? styles.active : ''}
             onClick={() => {
                 changeStyle('/done')
                 setStatus("completed")

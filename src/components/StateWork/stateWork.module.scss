@@ -1,0 +1,10 @@
+.link{
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-around;
+
+    .active{
+    text-decoration: underline;
+    color: #2e9cf7;
+}
+}

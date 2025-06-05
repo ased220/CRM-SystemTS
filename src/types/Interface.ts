@@ -28,9 +28,6 @@ export interface MetaResponse<T, N> {
 	}
 }
 
-export interface requestOptions {
-    method:string
-    body:string
-}
+
 
 export type TodoInfoCheck = 'all' | 'completed' | 'inWork'

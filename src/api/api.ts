@@ -1,30 +1,30 @@
-import type { MetaResponse, requestOptions, Todo, TodoInfo, TodoInfoCheck, TodoRequest } from "./types/Interface"
+import type { MetaResponse, Todo, TodoInfo, TodoInfoCheck, TodoRequest } from "../types/Interface"
 
-export async function postFetch(obj: TodoRequest){
-    const requestOptions: requestOptions = {
-      method: 'POST',
-      body: JSON.stringify(obj)
-    }
+export async function addTodo(obj: TodoRequest):Promise<Todo> { 
 
     try {
-      const response = await fetch('https://easydev.club/api/v1/todos', requestOptions)
+      const response = await fetch('https://easydev.club/api/v1/todos', {
+        method: 'POST',
+        body: JSON.stringify(obj)
+      }
+)
       if (!response.ok){ throw new Error(`Status: ${response.status}`) }
       
-      return response.json() as Promise<Todo>
+      return response.json()
 
     } catch (error) {
       console.error(error)
+      throw error
     }
   }
 
-export async function putFetch(obj: TodoRequest){
-    const requestOptions: requestOptions = {
+export async function editTodo(obj: TodoRequest){
+  
+    try {
+      const response = await fetch(`https://easydev.club/api/v1/todos/${obj.id}`, {
         method: 'PUT',
         body: JSON.stringify(obj)
-    }
-    
-    try {
-      const response = await fetch(`https://easydev.club/api/v1/todos/${obj.id}`, requestOptions)
+    })
 
       if (!response.ok){ throw new Error(`Status: ${response.status}`) } 
 
@@ -34,7 +34,7 @@ export async function putFetch(obj: TodoRequest){
     }
   }
 
-  export async function deleteFetch(id: number) {
+  export async function deleteTodo(id: number) {
 
     try {
 
@@ -52,7 +52,7 @@ export async function putFetch(obj: TodoRequest){
     
   } 
 
-  export async function filterFetch(status: TodoInfoCheck): Promise<MetaResponse<Todo, TodoInfo >> {
+  export async function filterTodo(status: TodoInfoCheck): Promise<MetaResponse<Todo, TodoInfo >> {
   
     try {
 
