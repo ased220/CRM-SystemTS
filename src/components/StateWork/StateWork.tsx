@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Link } from "react-router";
 import type { TodoInfo, TodoInfoCheck } from "../../types/Interface";
 import styles from './stateWork.module.scss'
 
@@ -8,47 +7,41 @@ interface Props{
     setStatus: React.Dispatch<React.SetStateAction<TodoInfoCheck>>
 }
 
-type setStatus = '/' | '/atWork' | '/done'
-
 export default function StateWork({statusList, setStatus }:Props){
-    const [activeLink, setActiveLink] = useState('/')
 
+  const [activeFilterStatus, setActiveFilterStatus] = useState<TodoInfoCheck>('all') 
 
-    const changeStyle = (path:setStatus) =>{
-        setActiveLink(path);
-    }
     return (
         
         <div className={styles.link}>
-          <Link to='/' 
-            className={ activeLink == '/'? styles.active: ''}
+          <button 
+            className={ activeFilterStatus == 'all'? `${styles.buttonFilter} ${styles.active}`: styles.buttonFilter}
             onClick={() => {
-                changeStyle('/') 
                 setStatus("all")
-                
+                setActiveFilterStatus('all')
                 }
             }
-          >{ `Все (${statusList.all})` }</Link>
+          >{ `Все (${statusList.all})` }</button>
 
-          <Link to='/atWork'
-            className={ activeLink == '/atWork'? styles.active : ''}
+          <button
+            className={ activeFilterStatus == 'inWork'? `${styles.buttonFilter} ${styles.active}`: styles.buttonFilter}
             onClick={() =>{ 
-                changeStyle('/atWork')
                 setStatus("inWork")
+                setActiveFilterStatus('inWork')
                 
                 }
             }
-          > { `В процессе (${statusList.inWork})` }</Link>
+          > { `В процессе (${statusList.inWork})` }</button>
 
-          <Link to='/done'
-            className={ activeLink == '/done'? styles.active : ''}
+          <button
+            className={ activeFilterStatus == 'completed'? `${styles.buttonFilter} ${styles.active}`: styles.buttonFilter}
             onClick={() => {
-                changeStyle('/done')
                 setStatus("completed")
-                
+                setActiveFilterStatus('completed')
+
                 }
             }
-          > { `Готово (${statusList.completed})` } </Link>
+          > { `Готово (${statusList.completed})` } </button>
          
         </div>
     )

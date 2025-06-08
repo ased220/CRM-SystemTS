@@ -4,7 +4,6 @@ import ListItem from  "../components/ListItem/ListItem"
 import { filterTodo } from "../api/api"
 import type { Todo, TodoInfo, MetaResponse, TodoInfoCheck} from "../types/Interface"
 import StateWork from "../components/StateWork/StateWork"
-import { BrowserRouter, Route, Routes } from "react-router"
 
 
 export default function TodosPage (){
@@ -42,16 +41,10 @@ export default function TodosPage (){
 
   return (
     <>
-    <BrowserRouter>
+
       <InputTask reloadList = {reloadList}/>
       <StateWork statusList = {statusList} setStatus= {setStatus}/>
-
-      <Routes>
-        <Route path = '/' element = { <ListItem tasks = {tasks} reloadList = {reloadList}/> }/>
-        <Route path = '/atWork' element = { <ListItem tasks = {tasks} reloadList = {reloadList}/> }/>
-        <Route path = 'done' element = { <ListItem tasks = {tasks} reloadList = {reloadList}/> }/>
-      </Routes>
-    </BrowserRouter>
+      <ListItem tasks = {tasks} reloadList = {reloadList}/>
     </>
   )
 }
