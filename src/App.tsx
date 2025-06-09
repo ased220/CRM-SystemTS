@@ -1,12 +1,13 @@
-import TodosPage from "./pages/TodosPage"
 
+import './App.css'
 
 function App() {
-    return(
-        <div className="page">
-            <TodosPage />   
-        </div>
-    )
+
+  return (
+    <>
+
+    </>
+  )
 }
 
 export default App
