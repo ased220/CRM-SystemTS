@@ -5,6 +5,7 @@ import EditIcon from '../../assets/edit.svg'
 import type { Todo } from '../../types/Interface';
 import styles from './taskCard.module.scss'
 import errorStyle from '../AddTask/addTask.module.scss'
+
 interface ItemProps {
     task:Todo;
     reloadList: () => void;

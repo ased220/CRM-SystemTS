@@ -5,7 +5,6 @@ import { filterTodo } from "../api/api"
 import type { Todo, TodoInfo, MetaResponse, TodoInfoCheck} from "../types/Interface"
 import StateWork from "../components/StateWork/StateWork"
 
-
 export default function TodosPage (){
         const [status, setStatus] = useState<TodoInfoCheck>('all')
 

@@ -28,6 +28,4 @@ export interface MetaResponse<T, N> {
 	}
 }
 
-
-
 export type TodoInfoCheck = 'all' | 'completed' | 'inWork'

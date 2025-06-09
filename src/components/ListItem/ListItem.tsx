@@ -1,7 +1,7 @@
-
 import type { Todo } from "../../types/Interface"
 import TaskCard from "../TaskCard/TaskCard"
 import styles from './listItem.module.scss'
+
 interface ListProps {
     tasks: Array<Todo>;
     reloadList: () => void;

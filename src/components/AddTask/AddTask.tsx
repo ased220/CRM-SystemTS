@@ -1,11 +1,13 @@
 import { useState, type FormEvent } from "react";
 import { addTodo } from "../../api/api";
 import styles from'./addTask.module.scss'
+
 interface AddTaskProps {
     reloadList: () => void
 }
 
 type InputTytleError = ''| 'Error'
+
 export default function AddTask( {reloadList}: AddTaskProps ) {
 
   const [addTitle, setAddTitle] = useState<string>('');

@@ -42,7 +42,6 @@ export default function StateWork({statusList, setStatus }:Props){
                 }
             }
           > { `Готово (${statusList.completed})` } </button>
-         
         </div>
     )
 
