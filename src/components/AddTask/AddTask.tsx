@@ -5,10 +5,11 @@ interface AddTaskProps {
     reloadList: () => void
 }
 
+type InputTytleError = ''| 'Error'
 export default function AddTask( {reloadList}: AddTaskProps ) {
 
-  const [addTitle, setAddTitle] = useState('');
-  const [inputTitleError, setInputTitleError] = useState('');
+  const [addTitle, setAddTitle] = useState<string>('');
+  const [inputTitleError, setInputTitleError] = useState<InputTytleError>('');
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();

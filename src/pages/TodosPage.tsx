@@ -34,6 +34,7 @@ export default function TodosPage (){
             }
           }
       } catch (error) {
+        alert('Ошибка!!!')
         console.error(error)
       }
     }  

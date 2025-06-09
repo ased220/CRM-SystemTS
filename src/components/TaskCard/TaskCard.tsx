@@ -15,7 +15,7 @@ export default function TaskCard ({task, reloadList}: ItemProps ){
     const [inputError, setIputError] = useState('');
     const [changeTitle, setChangeTitle] = useState('')
 
-    const [edit, setEdit] = useState( { swap: true});
+    const [edit, setEdit] = useState<boolean>( true);
 
     const onChancgeIsDone = async() => {
         try {
@@ -40,7 +40,7 @@ export default function TaskCard ({task, reloadList}: ItemProps ){
     const editTitleInput = () =>{
          if (changeTitle.length >= 2 && changeTitle.length <= 64 ){
 
-            setEdit({ swap: true})
+            setEdit(true)
             setIputError('')
             const changeTask = task;
             changeTask.title = changeTitle;
@@ -63,11 +63,11 @@ export default function TaskCard ({task, reloadList}: ItemProps ){
                     )
             }
             {
-                    edit.swap? ( 
+                    edit? ( 
                         <>
                             <p>{task.title}</p>    
                             <img src={EditIcon} className={styles.btnList}
-                            onClick = {() => setEdit({ swap: false}) }
+                            onClick = {() => setEdit( false ) }
                             />
                         </>
                     ):(
@@ -81,7 +81,7 @@ export default function TaskCard ({task, reloadList}: ItemProps ){
                             </div>
                             
                             <button className={styles.btnList} onClick={ () => editTitleInput() }> 	&#10004; </button>
-                            <button className={styles.btnList} onClick={ () => setEdit({ swap: true}) }> 	&#10006; </button>
+                            <button className={styles.btnList} onClick={ () => setEdit( true ) }> 	&#10006; </button>
                         </>
                     )  
             
