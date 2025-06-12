@@ -1,7 +1,11 @@
 
+import { Typography } from "antd";
 import type { Todo } from "../../types/Interface"
 import TaskCard from "../TaskCard/TaskCard"
 import styles from './listItem.module.scss'
+
+const { Text } = Typography;
+
 interface ListProps {
     tasks: Array<Todo>;
     reloadList: () => void;
@@ -14,7 +18,7 @@ export default function listItem({tasks, reloadList}: ListProps){
         <>
         {   
             !tasks.length? (
-                <p className= {styles.noTasks}> Задачи отсутствуют </p>
+                <Text className= {styles.noTasks}> Задачи отсутствуют </Text>
             ):(
 
                 tasks.map((obj)=>{

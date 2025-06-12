@@ -4,16 +4,20 @@ import deleteIcon from '../../assets/delete.svg'
 import EditIcon from '../../assets/edit.svg'
 import type { Todo } from '../../types/Interface';
 import styles from './taskCard.module.scss'
-import errorStyle from '../AddTask/addTask.module.scss'
+import { Button, Checkbox, Form, Input, Typography } from 'antd';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+
+const { Text } = Typography;
+
 interface ItemProps {
     task:Todo;
     reloadList: () => void;
-    
 }
 
 export default function TaskCard ({task, reloadList}: ItemProps ){ 
-    const [inputError, setIputError] = useState('');
-    const [changeTitle, setChangeTitle] = useState('')
+ 
+    const [form] = Form.useForm();
+
 
     const [edit, setEdit] = useState<boolean>( true);
 
@@ -37,59 +41,82 @@ export default function TaskCard ({task, reloadList}: ItemProps ){
         }
     }
 
-    const editTitleInput = () =>{
-         if (changeTitle.length >= 2 && changeTitle.length <= 64 ){
+    const editTitleInput = async() =>{
+        await form.validateFields();
+        const values = form.getFieldsValue();
+        if (values.title.length >= 2 && values.title.length <= 64) {
 
             setEdit(true)
-            setIputError('')
             const changeTask = task;
-            changeTask.title = changeTitle;
+            changeTask.title = values.title;
             editTodo(changeTask);
 
         } else {
-            setIputError('Error')            
             alert( "Не удалось изменить задачу" );
         }
     
-        
     }
     return (
+       
          <div className={styles.list}>
             {
                 task.isDone? ( 
-                    <input className={styles.inpCheck} type="checkbox" checked onChange={() => onChancgeIsDone() } /> 
+                    <Checkbox className={styles.inpCheck} type="checkbox" checked onChange={() => onChancgeIsDone() } /> 
                     ):(
-                    <input className={styles.inpCheck} type="checkbox" checked = {false} onChange={() => onChancgeIsDone()} />
+                    <Checkbox className={styles.inpCheck} type="checkbox" checked = {false} onChange={() => onChancgeIsDone()} />
                     )
             }
             {
                     edit? ( 
                         <>
-                            <p>{task.title}</p>    
-                            <img src={EditIcon} className={styles.btnList}
-                            onClick = {() => setEdit( false ) }
-                            />
+                            <Text className={styles.text}>{task.title}</Text>
+                            <Button type='text' className={styles.btnList} >    
+                                <img src={EditIcon} className={styles.btnListImg}
+                                onClick = {() => setEdit( false ) }
+                                />
+                            </Button>
                         </>
                     ):(
-                        <>
-                            <div>
-                                <input className= { inputError == 'Error'? `editInput ${errorStyle.inputError}`: 'editInput'} 
+                        <Form form={form} className={styles.formEdit}>
+                            <Form.Item
+                                name="title"
+                                rules={[
+                                    { 
+                                        required: true, 
+                                        message: "от 2 до 64 символов" 
+                                    },
+                                    {
+                                        min: 2,
+                                        message: 'не короче 2 символов!',
+                                    },
+                                    {
+                                        max: 64,
+                                        message: 'не длиннее 64 символов!',
+                                    },
+                                ]}
+                                validateTrigger={'onChange'}
+                            >
+                                <Input 
+                                    style={{width: '225px', justifyContent:'center'}}
                                     defaultValue={task.title} 
-                                    onChange={(e) => setChangeTitle(e.target.value)} 
-                                /> 
-                                { inputError == 'Error'? <p className= {errorStyle.errorText}> Введите значение от 2 до 64 </p>: ''}
-                            </div>
-                            
-                            <button className={styles.btnList} onClick={ () => editTitleInput() }> 	&#10004; </button>
-                            <button className={styles.btnList} onClick={ () => setEdit( true ) }> 	&#10006; </button>
-                        </>
-                    )  
-            
-            }
+                                />    
+                            </Form.Item>
+                            <Form.Item>
+                            <Button icon={ <CheckOutlined  /> } className={styles.btnList} onClick={ () => editTitleInput() }/>
+                            </Form.Item>
+                            <Form.Item>
+                            <Button icon={ <CloseOutlined /> } className={styles.btnList} onClick={ () => setEdit( true ) }/> 
+                            </Form.Item>
 
-                <img src={deleteIcon} className={styles.btnList}
-                    onClick = {() => onClickDelete(task.id)}
-                />
+                        </Form>
+                    )  
+                    
+                }
+                <Button type='text' className={styles.btnList}>
+                    <img src={deleteIcon} className={styles.btnListImg} 
+                        onClick = {() => onClickDelete(task.id)}
+                        />
+                </Button>
          </div>
     )
 }

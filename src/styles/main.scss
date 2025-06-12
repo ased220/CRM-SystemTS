@@ -17,20 +17,19 @@ body {
 }
 input {
     height: 2rem;
-    border: 0px;
+    border: none;
     border-bottom: 2px solid #bdbdbd;
     background: none;
-    padding-left: 0rem;
-    padding-right: 0.75rem;
-
+    // padding-left: 0rem;
+    // padding-right: 0.75rem;
 }
 button{
-        background-color: #2e9cf7;
-        border-radius: 5px;
-        border: none;
-        width: 100px;
-        height: 45px;
-        transition: 0.2s;
+    background-color: #2e9cf7;
+    border-radius: 5px;
+    border: none;
+    width: 100px;
+    height: 45px;
+    transition: 0.2s;
 }
 
 button:hover{
