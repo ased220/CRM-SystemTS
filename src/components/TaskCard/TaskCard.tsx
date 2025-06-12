@@ -95,10 +95,10 @@ export default function TaskCard ({task, reloadList}: ItemProps ){
                                     },
                                 ]}
                                 validateTrigger={'onChange'}
+                                initialValue = {task.title} 
                             >
                                 <Input 
                                     style={{width: '225px', justifyContent:'center'}}
-                                    defaultValue={task.title} 
                                 />    
                             </Form.Item>
                             <Form.Item>
@@ -107,7 +107,6 @@ export default function TaskCard ({task, reloadList}: ItemProps ){
                             <Form.Item>
                             <Button icon={ <CloseOutlined /> } className={styles.btnList} onClick={ () => setEdit( true ) }/> 
                             </Form.Item>
-
                         </Form>
                     )  
                     
