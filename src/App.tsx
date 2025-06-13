@@ -4,7 +4,8 @@ import { MenuFoldOutlined, MenuUnfoldOutlined, SmileOutlined, UnorderedListOutli
 import { useState } from "react";
 import './styles/app.scss'
 import Profile from "./pages/Profile";
-import { Route, Routes, useNavigate } from "react-router";
+import { Route, Routes, useNavigate, useLocation } from "react-router";
+
 type MenuItem = Required<MenuProps>["items"][number];
 
 const items: MenuItem[] = [
@@ -16,7 +17,9 @@ function App() {
 
     const [collapsed, setCollapsed] = useState(false);
     const toggleCollapsed = () => { setCollapsed(!collapsed); };
-      const navigate = useNavigate()
+    const navigate = useNavigate()
+    const location = useLocation()
+    
 
     const handleMenu = (e: {key:string}) => {
         if( e.key == '1') navigate('/');
@@ -48,7 +51,7 @@ function App() {
         </div>
         <div className="page"> 
             <Routes>
-                <Route path='/' element={ <TodosPage /> } />
+                <Route path='/' element={ <TodosPage pathname = {location.pathname}  /> } />
                 <Route path='/profile' element={ <Profile /> } />
         
             </Routes>
