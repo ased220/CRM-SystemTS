@@ -1,50 +1,71 @@
-import { useState, type FormEvent } from "react";
+// import { useState, type FormEvent } from "react";
 import { addTodo } from "../../api/api";
 import styles from'./addTask.module.scss'
+import { Button, Form, Input } from "antd";
+
+
 interface AddTaskProps {
     reloadList: () => void
 }
 
-type InputTytleError = ''| 'Error'
 export default function AddTask( {reloadList}: AddTaskProps ) {
 
-  const [addTitle, setAddTitle] = useState<string>('');
-  const [inputTitleError, setInputTitleError] = useState<InputTytleError>('');
+    const [form] = Form.useForm();
 
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
 
+
+    const handleSubmit = async () => {
+    
+        await form.validateFields();
+        const values = form.getFieldsValue();
         try {
-            if (addTitle.length >= 2 && addTitle.length <= 64) {
+           if (values.title.length >= 2 && values.title.length <= 64) {
                 await addTodo({
-                    title: addTitle,
+                    title: values.title,
                     isDone: false,
                 });
                 reloadList();
-                setInputTitleError('');
-                setAddTitle('');
-            } else {
-                setInputTitleError('Error');
+                form.resetFields();
             }
         } catch (error) {
+            alert('Ошибка! Не удалось совершить действие')
             console.error(error);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} className={styles.inputTask}>
-            <div>
-                <input
-                    className={inputTitleError === 'Error' ? styles.inputError : ''}
-                    value={addTitle}
-                    onChange={(e) => setAddTitle(e.target.value)}
-                    placeholder='Task to be done...'
+        <Form form={form} className={styles.inputTask} onFinish={handleSubmit}>
+            <Form.Item
+                name="title"
+                rules={[
+                    { 
+                        required: true, 
+                        message: "Введите значение от 2 до 64 символов" 
+                    },
+                    {
+                        min: 2,
+                        message: 'Значение должно быть не короче 2 символов!',
+                    },
+                    {
+                        max: 64,
+                        message: 'Значение должно быть не длиннее 64 символов!',
+                    },
+                ]}
+                validateTrigger={'onChange'}
+
+            >
+                <Input placeholder="Task to be done..."
+                    className={styles.taskAddInput}
                 />
-                {inputTitleError === 'Error' && (
-                    <p className={styles.errorText}>Введите значение от 2 до 64 символов</p>
-                )}
-            </div>
-            <button type="submit">Add</button>
-        </form>
+            </Form.Item>   
+            <Form.Item >
+                <Button type="primary" htmlType="submit" className={styles.taskAddButton}>
+                    Add
+                </Button>
+            </Form.Item>
+
+        </Form>
+        
+
     );
 }
