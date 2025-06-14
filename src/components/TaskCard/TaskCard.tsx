@@ -77,7 +77,7 @@ export default function TaskCard ({task, reloadList}: ItemProps ){
                             </Button>
                         </>
                     ):(
-                        <Form form={form} className={styles.formEdit}>
+                        <Form form={form} className={styles.formEdit} onFinish = { editTitleInput }>
                             <Form.Item
                                 name="title"
                                 rules={[
@@ -102,7 +102,7 @@ export default function TaskCard ({task, reloadList}: ItemProps ){
                                 />    
                             </Form.Item>
                             <Form.Item>
-                            <Button icon={ <CheckOutlined  /> } className={styles.btnList} onClick={ () => editTitleInput() }/>
+                            <Button icon={ <CheckOutlined  /> } className={styles.btnList} htmlType='submit'/>
                             </Form.Item>
                             <Form.Item>
                             <Button icon={ <CloseOutlined /> } className={styles.btnList} onClick={ () => setEdit( true ) }/> 

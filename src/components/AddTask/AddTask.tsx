@@ -34,7 +34,7 @@ export default function AddTask( {reloadList}: AddTaskProps ) {
     };
 
     return (
-        <Form form={form} className={styles.inputTask}>
+        <Form form={form} className={styles.inputTask} onFinish={handleSubmit}>
             <Form.Item
                 name="title"
                 rules={[
@@ -59,7 +59,7 @@ export default function AddTask( {reloadList}: AddTaskProps ) {
                 />
             </Form.Item>   
             <Form.Item >
-                <Button type="primary" onClick={ handleSubmit } className={styles.taskAddButton}>
+                <Button type="primary" htmlType="submit" className={styles.taskAddButton}>
                     Add
                 </Button>
             </Form.Item>

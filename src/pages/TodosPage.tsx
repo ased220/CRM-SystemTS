@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import InputTask from "../components/AddTask/AddTask" 
 import ListItem from  "../components/ListItem/ListItem" 
 import { filterTodo } from "../api/api"
@@ -56,14 +56,18 @@ export default function TodosPage ({pathname}:TodosPage){
         alert('Ошибка!!!')
         console.error(error)
       }
-    }  
+    } 
+
+    const listItemkMemo = useMemo(()=>{
+        return <ListItem tasks = {tasks} reloadList = {reloadList}/>
+    },[tasks]) // нифига не работает, все также ререндерится
     
   return (
     <>
 
       <InputTask reloadList = {reloadList}/>
       <StateWork statusList = {statusList} setStatus= {setStatus}/>
-      <ListItem tasks = {tasks} reloadList = {reloadList}/>
+       {listItemkMemo}
     </>
   )
 }
