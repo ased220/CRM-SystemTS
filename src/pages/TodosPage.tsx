@@ -4,6 +4,7 @@ import ListItem from  "../components/ListItem/ListItem"
 import { filterTodo } from "../api/api"
 import type { Todo, TodoInfo, MetaResponse, TodoInfoCheck} from "../types/Interface"
 import StateWork from "../components/StateWork/StateWork"
+import { notification } from "antd"
 
 interface TodosPage {
   pathname: string
@@ -12,6 +13,9 @@ interface TodosPage {
 export default function TodosPage ({pathname}:TodosPage){
 
     const [status, setStatus] = useState<TodoInfoCheck>('all')
+
+    const [errorAlert, contextHolder] = notification.useNotification();
+
 
     const [statusList, setStatusList] = useState<TodoInfo>({
       all: 0,
@@ -53,7 +57,9 @@ export default function TodosPage ({pathname}:TodosPage){
           }
         }
       } catch (error) {
-        alert('Ошибка!!!')
+        errorAlert.open({
+          message:'Ошибка! Не удалось совершить действие'
+        })
         console.error(error)
       }
     } 
@@ -63,11 +69,12 @@ export default function TodosPage ({pathname}:TodosPage){
     },[tasks]) // нифига не работает, все также ререндерится
     
   return (
-    <>
-
+    
+    <div className="page">
+      {contextHolder} 
       <InputTask reloadList = {reloadList}/>
       <StateWork statusList = {statusList} setStatus= {setStatus}/>
        {listItemkMemo}
-    </>
+    </div>
   )
 }

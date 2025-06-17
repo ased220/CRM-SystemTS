@@ -4,9 +4,9 @@ import deleteIcon from '../../assets/delete.svg'
 import EditIcon from '../../assets/edit.svg'
 import type { Todo } from '../../types/Interface';
 import styles from './taskCard.module.scss'
-import { Button, Checkbox, Form, Input, Typography } from 'antd';
+import { Button, Checkbox, Form, Input, notification, Typography } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
-
+import { titleValidationRules  } from '../../constants/validation'
 const { Text } = Typography;
 
 interface ItemProps {
@@ -18,6 +18,8 @@ export default function TaskCard ({task, reloadList}: ItemProps ){
  
     const [form] = Form.useForm();
 
+    const [errorAlert, contextHolder] = notification.useNotification();
+
 
     const [edit, setEdit] = useState<boolean>( true);
 
@@ -26,7 +28,9 @@ export default function TaskCard ({task, reloadList}: ItemProps ){
             await editTodo( { ...task, isDone: !task.isDone })
             reloadList()    
         } catch (error) {
-            alert( "Не удалось изменить статус задачи" );
+            errorAlert.open({
+                message:'Не удалось изменить статус задачи'
+            })
             console.error(error);
         }
     }
@@ -36,29 +40,32 @@ export default function TaskCard ({task, reloadList}: ItemProps ){
             await deleteTodo(id)
             reloadList()
         } catch (error) {
-            alert( "Не удалось удалить задачу" );
+            errorAlert.open({
+                message:"Не удалось удалить задачу"
+            })
             console.error(error);
         }
     }
 
-    const editTitleInput = async() =>{
-        await form.validateFields();
-        const values = form.getFieldsValue();
-        if (values.title.length >= 2 && values.title.length <= 64) {
-
+    const handleChangeTodoTitle   = async() =>{
+        
+        try{
+            form.validateFields();
+            const values = form.getFieldsValue();
             setEdit(true)
-            const changeTask = task;
-            changeTask.title = values.title;
-            editTodo(changeTask);
-
-        } else {
-            alert( "Не удалось изменить задачу" );
+            await editTodo({...task, title:values.title});
+            reloadList()
+        }catch{
+            errorAlert.open({
+                message:'Изменения не применились'
+            })
         }
-    
+
     }
     return (
        
          <div className={styles.list}>
+            {contextHolder}
             {
                 task.isDone? ( 
                     <Checkbox className={styles.inpCheck} type="checkbox" checked onChange={() => onChancgeIsDone() } /> 
@@ -77,39 +84,23 @@ export default function TaskCard ({task, reloadList}: ItemProps ){
                             </Button>
                         </>
                     ):(
-                        <Form form={form} className={styles.formEdit} onFinish = { editTitleInput }>
+                        <Form form={form} className={styles.formEdit} onFinish = { handleChangeTodoTitle   }>
                             <Form.Item
                                 name="title"
-                                rules={[
-                                    { 
-                                        required: true, 
-                                        message: "от 2 до 64 символов" 
-                                    },
-                                    {
-                                        min: 2,
-                                        message: 'не короче 2 символов!',
-                                    },
-                                    {
-                                        max: 64,
-                                        message: 'не длиннее 64 символов!',
-                                    },
-                                ]}
+                                rules={ titleValidationRules  }
                                 validateTrigger={'onChange'}
                                 initialValue = {task.title} 
                             >
-                                <Input 
-                                    style={{width: '225px', justifyContent:'center'}}
-                                />    
+                                <Input style={{width: '225px', justifyContent:'center'}}/>    
                             </Form.Item>
                             <Form.Item>
-                            <Button icon={ <CheckOutlined  /> } className={styles.btnList} htmlType='submit'/>
+                            <Button icon={ <CheckOutlined  /> } className={styles.btnList}  htmlType='submit'/>
                             </Form.Item>
                             <Form.Item>
                             <Button icon={ <CloseOutlined /> } className={styles.btnList} onClick={ () => setEdit( true ) }/> 
                             </Form.Item>
                         </Form>
                     )  
-                    
                 }
                 <Button type='text' className={styles.btnList}>
                     <img src={deleteIcon} className={styles.btnListImg} 
