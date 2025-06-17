@@ -62,6 +62,11 @@ export default function TaskCard ({task, reloadList}: ItemProps ){
         }
 
     }
+    const handleClose = () => {
+        form.resetFields(); 
+        setEdit(true);     
+    };
+
     return (
        
          <div className={styles.list}>
@@ -92,12 +97,13 @@ export default function TaskCard ({task, reloadList}: ItemProps ){
                                 initialValue = {task.title} 
                             >
                                 <Input style={{width: '225px', justifyContent:'center'}}/>    
+     
                             </Form.Item>
                             <Form.Item>
                             <Button icon={ <CheckOutlined  /> } className={styles.btnList}  htmlType='submit'/>
                             </Form.Item>
                             <Form.Item>
-                            <Button icon={ <CloseOutlined /> } className={styles.btnList} onClick={ () => setEdit( true ) }/> 
+                            <Button icon={ <CloseOutlined /> } className={styles.btnList} onClick={ () => handleClose() }/> 
                             </Form.Item>
                         </Form>
                     )  
