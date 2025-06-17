@@ -1,0 +1,76 @@
+$primary-color: #7F265B;
+
+.container{
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+.circle{
+    position: absolute;
+    top: calc(100vh - (167px /2));
+    left: calc(50vw - (167px/2));    
+}
+
+.illustration{
+    width: 50vw;
+    height: 100vh;
+}
+
+.content{
+    background-color: white;
+    width: 50vw;
+}
+
+.imgAboveText{
+    width:72px;    
+}
+.loginAccount{
+    margin: 50px auto;
+    width: 420px;
+    height: 505px;
+}
+.buttonGoogle{
+    margin: 30px auto;
+    width: 420px;
+}
+.loginForm{
+    margin-top:30px;
+    .inputForm{
+        width: 420px;
+        height: 45px;
+    }
+}
+.buttonLogin{
+    margin-top: 32px;
+    width: 420px;
+    height: 50px;
+    background-color: $primary-color;
+    &:hover {
+        background-color: #b53782;//не работает ни в какую
+        
+    }
+}
+
+.checkboxForm{
+    margin-right: 10px;
+    .ant-checkbox-checked .ant-checkbox-inner {
+        background-color: #ff4d4f;
+        border-color: #ff4d4f;
+    }
+} // как только не пробовал, вообще не получается поменять цвет
+
+.forgotPsw{
+    justify-content: space-between;
+    .link{
+        color: $primary-color;
+    }
+}
+
+.containerRegistr{
+    margin: auto;
+    gap: 30px;
+    .link{
+        color: $primary-color;
+    }
+}
