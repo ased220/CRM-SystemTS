@@ -3,15 +3,22 @@ import skeleton from '../../assets/illustration.png'
 import imgAboveText from '../../assets/imgAboveText.svg' // не знаю как назвать
 import circle from '../../assets/Vector.png'
 import google from '../../assets/google.svg'
-import './signIn.scss'
+import './signUp.scss'
 import { Typography } from 'antd';
+import { useAppDispatch } from '../../app/hooks'
+import type { AuthData } from '../../types/Interface'
+import { userLogin } from '../../store/slices/loginSlice'
 
 
 const { Text, Title, Link  } = Typography
 export default function SignUp(){
 
+    const dispatch = useAppDispatch();
     const [form] = Form.useForm();
 
+    const handlerLoginUser = (values:AuthData) =>{
+        dispatch(userLogin(values));
+    }
 
      return (
         <div className='container'>
@@ -25,13 +32,14 @@ export default function SignUp(){
                         <Text>See what is going on with your business</Text>
                         <Button className='buttonGoogle'> <img src={google} /> Continue with Google </Button>
                         <Text style={{textAlign: 'center'}}>------------- or Sign in with Email -------------</Text>
-                        <Form form ={form} onFinish={() =>{}} className='loginForm' layout='vertical'>
+                        <Form form ={form} onFinish={handlerLoginUser} className='loginForm' layout='vertical'>
                             <Form.Item
-                                name = 'email' 
-                                label = 'Email'
-                                rules={[{ type: 'email', warningOnly: true }, { type: 'string', min: 6 }]}
+                                className='formItem'
+                                name = 'login' 
+                                label = 'Login'
+                                rules={[{required: true, message:'Поле обязательно'},{ type: 'string', min: 1, max: 60 }]}
                                 >
-                                <Input placeholder="mail@abc.com" className='inputForm'/>
+                                <Input placeholder="Login" className='inputForm'/>
                             </Form.Item>
                             <Form.Item
                                 style={{margin:'0'}}

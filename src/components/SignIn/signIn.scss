@@ -23,26 +23,29 @@ $primary-color: #7F265B;
 }
 
 .imgAboveText{
-    width:72px;    
+    width:50px;    
 }
 .loginAccount{
-    margin: 50px auto;
+    margin: 20px auto 0px auto;
     width: 420px;
-    height: 505px;
 }
 .buttonGoogle{
-    margin: 30px auto;
+    margin: 5px auto;
+    height: 30px;
     width: 420px;
 }
 .loginForm{
-    margin-top:30px;
+    height: 480px;
     .inputForm{
         width: 420px;
-        height: 45px;
+        height: 30px;
+        input{
+            height: 20px;
+        }
     }
 }
 .buttonLogin{
-    margin-top: 32px;
+    margin: 0;
     width: 420px;
     height: 50px;
     background-color: $primary-color;
@@ -52,6 +55,9 @@ $primary-color: #7F265B;
     }
 }
 
+.formItem{
+    margin: 0%;
+}
 .checkboxForm{
     margin-right: 10px;
     .ant-checkbox-checked .ant-checkbox-inner {
@@ -69,7 +75,6 @@ $primary-color: #7F265B;
 
 .containerRegistr{
     margin: auto;
-    gap: 30px;
     .link{
         color: $primary-color;
     }
