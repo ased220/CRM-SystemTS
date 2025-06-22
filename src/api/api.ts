@@ -1,16 +1,14 @@
 import type { MetaResponse, Todo, TodoInfo, TodoInfoCheck, TodoRequest } from "../types/Interface"
+import axios from 'axios';
+
+const todoApi = axios.create({
+  baseURL: 'https://easydev.club/api/v1'
+})
 
 export async function addTodo(obj: TodoRequest):Promise<Todo> { 
-
     try {
-      const response = await fetch('https://easydev.club/api/v1/todos', {
-        method: 'POST',
-        body: JSON.stringify(obj)
-      }
-)
-      if (!response.ok){ throw new Error(`Status: ${response.status}`) }
-      
-      return response.json()
+      const response = await todoApi.post<Todo>('/todos', obj)
+      return response.data
 
     } catch (error) {
       console.error(error)
@@ -21,15 +19,10 @@ export async function addTodo(obj: TodoRequest):Promise<Todo> {
 export async function editTodo(obj: TodoRequest){
   
     try {
-      const response = await fetch(`https://easydev.club/api/v1/todos/${obj.id}`, {
-        method: 'PUT',
-        body: JSON.stringify(obj)
-    })
-
-      if (!response.ok){ throw new Error(`Status: ${response.status}`) } 
+        const response = await todoApi.put(`/todos/${obj.id}`, obj) 
+        return response.data
 
     } catch (error) {
-
       console.error(error)
     }
   }
@@ -38,12 +31,7 @@ export async function editTodo(obj: TodoRequest){
 
     try {
 
-      const response = await fetch(`https://easydev.club/api/v1/todos/${id}`, {method: 'DELETE'});
-
-      if (!response.ok){
-          throw new Error('Error')
-        }
-
+      await todoApi.delete(`/todos/${id}`);
       return ;
 
     } catch (error) {
@@ -56,13 +44,12 @@ export async function editTodo(obj: TodoRequest){
   
     try {
 
-        const response = await fetch(`https://easydev.club/api/v1/todos?filter=${status}`, { method: 'GET' });
-
-        if (!response.ok) {
-          throw new Error(`Status: ${response.status}`);
-        }
-
-        return await response.json();
+        const response = await todoApi.get<Promise<MetaResponse<Todo, TodoInfo >>>('/todos',{
+          params: {
+            filter: status
+          }
+        });
+        return await response.data;
 
     } catch (error) {
 

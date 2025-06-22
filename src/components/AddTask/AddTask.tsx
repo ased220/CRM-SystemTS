@@ -1,50 +1,61 @@
-import { useState, type FormEvent } from "react";
+// import { useState, type FormEvent } from "react";
 import { addTodo } from "../../api/api";
 import styles from'./addTask.module.scss'
+import { Button, Form, Input, notification } from "antd";
+import { titleValidationRules  } from '../../constants/validation'
+
+
 interface AddTaskProps {
     reloadList: () => void
 }
 
-type InputTytleError = ''| 'Error'
 export default function AddTask( {reloadList}: AddTaskProps ) {
 
-  const [addTitle, setAddTitle] = useState<string>('');
-  const [inputTitleError, setInputTitleError] = useState<InputTytleError>('');
+    const [form] = Form.useForm();
 
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
+    const [errorAlert, contextHolder] = notification.useNotification();
 
+
+    const handleSubmit = async () => {
+    
+        await form.validateFields();
+        const values = form.getFieldsValue();
         try {
-            if (addTitle.length >= 2 && addTitle.length <= 64) {
-                await addTodo({
-                    title: addTitle,
-                    isDone: false,
-                });
-                reloadList();
-                setInputTitleError('');
-                setAddTitle('');
-            } else {
-                setInputTitleError('Error');
-            }
+            await addTodo({
+                title: values.title,
+                isDone: false,
+            });
+            reloadList();
+            form.resetFields();
         } catch (error) {
+             errorAlert.open({
+                message:'Ошибка! Не удалось совершить действие'
+            })
             console.error(error);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} className={styles.inputTask}>
-            <div>
-                <input
-                    className={inputTitleError === 'Error' ? styles.inputError : ''}
-                    value={addTitle}
-                    onChange={(e) => setAddTitle(e.target.value)}
-                    placeholder='Task to be done...'
+        <Form form={form} className={styles.inputTask} onFinish={handleSubmit}>
+            {contextHolder}
+            <Form.Item
+                name="title"
+                rules={titleValidationRules}
+                validateTrigger={'onChange'}
+
+            >
+                <Input placeholder="Task to be done..."
+                    className={styles.taskAddInput}
                 />
-                {inputTitleError === 'Error' && (
-                    <p className={styles.errorText}>Введите значение от 2 до 64 символов</p>
-                )}
-            </div>
-            <button type="submit">Add</button>
-        </form>
+            </Form.Item>   
+            <Form.Item >
+                <Button type="primary" htmlType="submit" className={styles.taskAddButton}>
+                    Add
+                </Button>
+            </Form.Item>
+
+        </Form>
+        
+
     );
 }
