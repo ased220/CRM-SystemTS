@@ -7,26 +7,37 @@
     box-shadow: 3px 5px 5px rgb(182, 175, 175);
     display: flex;
     flex-direction: row;    
-     
-    p{
+ 
+    .text{
+        margin: auto;
         width: 267px;
         word-break: break-all;
         overflow: hidden;
         
     }
     .btnList{
-        margin: auto 5px;
+        margin: auto 10px;
+
         width: 30px;
         height: 30px;
         cursor: pointer;
-       
+        border: none;
     }
-
-    .editInput{
-        margin-top: 12px;
-        width: 180px;
+    .btnListImg{
+        width: 40px;
+        height: 40px;
+        cursor: pointer;
     }
     .inpCheck{
         margin:10px;
+    }
+    .edit{
+        margin-top: 12px;
+        width: 267px;    
+    }
+    .formEdit{
+        margin-top: 10px;
+        width: 320px;
+        display: flex;
     }
 }

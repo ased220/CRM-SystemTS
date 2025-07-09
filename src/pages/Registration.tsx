@@ -1,10 +1,9 @@
-import SignIn from '../components/SignIn/SignIn'
-import SignUp from '../components/SignUp/SignUp'
+// import SignIn from '../components/Sign/SignUp'
+import SignUp from '../components/Sign/SignIn'
 export default function Registration(){
     return (
         <>
             <SignUp />
-            {/* <SignIn /> */}
         </>
     )
 }

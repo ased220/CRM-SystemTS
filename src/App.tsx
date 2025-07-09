@@ -1,12 +1,75 @@
-import Registration from "./pages/Registration"
-// import TodosPage from "./pages/TodosPage"
+import TodosPage from "./pages/TodosPage"
+import './styles/app.scss'
+import Profile from "./pages/Profile";
+import { Route, Routes, useLocation, useNavigate } from "react-router";
+import MainLayout from "./components/Layout/MainLayout";
+import SignUp from "./components/Sign/SignUp";
+import SignIn from "./components/Sign/SignIn";
+import { useEffect } from "react";
+import { refreshTokenAction, resetStatusLogin } from "./store/slices/loginSlice";
+import { useAppDispatch, useAppSelector } from "./store/hooks";
+import type { RootState } from "./store/store";
 
 
 function App() {
+
+    const location = useLocation()
+    const navigate = useNavigate();
+    
+    const dispatch = useAppDispatch()
+    const { statusToken } = useAppSelector((state: RootState) => state.login)
+    
+    
+    console.log(location);
+    
+    useEffect(() => {
+        const checkAuth = async () =>{
+            if (location.pathname !== '/login'){
+
+                const refToken = localStorage.getItem('refreshToken');
+                if (refToken){
+                    console.log(1);
+                    
+                    await dispatch( refreshTokenAction(refToken));
+                    console.log(2);
+                }else{
+                    console.log(3);
+                    dispatch(resetStatusLogin())
+                    navigate('/login')
+                }
+                if (statusToken === 401){
+                    console.log(4);
+                    navigate('/login')
+                }
+            }
+            // }else{
+            //     navigate('/login')
+            // }
+        };
+        checkAuth();
+    }, [location])
+    
+    useEffect(() => {
+        if (statusToken === 401){
+            
+            navigate('/login')
+        }
+        
+    }, [statusToken ])
+    
     return(
         
         
-        <Registration />
+        <>        
+            <Routes>
+                <Route path="/" element={<MainLayout />}>
+                    <Route index element={<TodosPage pathname = {location.pathname} />} />
+                    <Route path="/profile" element={<Profile />} />
+                </Route>
+                    <Route path="/registration" element={ <SignUp /> } />
+                    <Route path="/login" element={ <SignIn /> } />
+            </Routes>
+        </>
     )
 }
 

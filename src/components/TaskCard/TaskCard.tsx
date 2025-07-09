@@ -4,16 +4,22 @@ import deleteIcon from '../../assets/delete.svg'
 import EditIcon from '../../assets/edit.svg'
 import type { Todo } from '../../types/Interface';
 import styles from './taskCard.module.scss'
-import errorStyle from '../AddTask/addTask.module.scss'
+import { Button, Checkbox, Form, Input, notification, Typography } from 'antd';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import { titleValidationRules  } from '../../constants/validation'
+const { Text } = Typography;
+
 interface ItemProps {
     task:Todo;
     reloadList: () => void;
-    
 }
 
 export default function TaskCard ({task, reloadList}: ItemProps ){ 
-    const [inputError, setIputError] = useState('');
-    const [changeTitle, setChangeTitle] = useState('')
+ 
+    const [form] = Form.useForm();
+
+    const [errorAlert, contextHolder] = notification.useNotification();
+
 
     const [edit, setEdit] = useState<boolean>( true);
 
@@ -22,7 +28,9 @@ export default function TaskCard ({task, reloadList}: ItemProps ){
             await editTodo( { ...task, isDone: !task.isDone })
             reloadList()    
         } catch (error) {
-            alert( "Не удалось изменить статус задачи" );
+            errorAlert.open({
+                message:'Не удалось изменить статус задачи'
+            })
             console.error(error);
         }
     }
@@ -32,64 +40,79 @@ export default function TaskCard ({task, reloadList}: ItemProps ){
             await deleteTodo(id)
             reloadList()
         } catch (error) {
-            alert( "Не удалось удалить задачу" );
+            errorAlert.open({
+                message:"Не удалось удалить задачу"
+            })
             console.error(error);
         }
     }
 
-    const editTitleInput = () =>{
-         if (changeTitle.length >= 2 && changeTitle.length <= 64 ){
-
-            setEdit(true)
-            setIputError('')
-            const changeTask = task;
-            changeTask.title = changeTitle;
-            editTodo(changeTask);
-
-        } else {
-            setIputError('Error')            
-            alert( "Не удалось изменить задачу" );
-        }
-    
+    const handleChangeTodoTitle   = async() =>{
         
+        try{
+            form.validateFields();
+            const values = form.getFieldsValue();
+            setEdit(true)
+            await editTodo({...task, title:values.title});
+            reloadList()
+        }catch{
+            errorAlert.open({
+                message:'Изменения не применились'
+            })
+        }
+
     }
+    const handleClose = () => {
+        form.resetFields(); 
+        setEdit(true);     
+    };
+
     return (
+       
          <div className={styles.list}>
+            {contextHolder}
             {
                 task.isDone? ( 
-                    <input className={styles.inpCheck} type="checkbox" checked onChange={() => onChancgeIsDone() } /> 
+                    <Checkbox className={styles.inpCheck} type="checkbox" checked onChange={() => onChancgeIsDone() } /> 
                     ):(
-                    <input className={styles.inpCheck} type="checkbox" checked = {false} onChange={() => onChancgeIsDone()} />
+                    <Checkbox className={styles.inpCheck} type="checkbox" checked = {false} onChange={() => onChancgeIsDone()} />
                     )
             }
             {
                     edit? ( 
                         <>
-                            <p>{task.title}</p>    
-                            <img src={EditIcon} className={styles.btnList}
-                            onClick = {() => setEdit( false ) }
-                            />
+                            <Text className={styles.text}>{task.title}</Text>
+                            <Button type='text' className={styles.btnList} >    
+                                <img src={EditIcon} className={styles.btnListImg}
+                                onClick = {() => setEdit( false ) }
+                                />
+                            </Button>
                         </>
                     ):(
-                        <>
-                            <div>
-                                <input className= { inputError == 'Error'? `editInput ${errorStyle.inputError}`: 'editInput'} 
-                                    defaultValue={task.title} 
-                                    onChange={(e) => setChangeTitle(e.target.value)} 
-                                /> 
-                                { inputError == 'Error'? <p className= {errorStyle.errorText}> Введите значение от 2 до 64 </p>: ''}
-                            </div>
-                            
-                            <button className={styles.btnList} onClick={ () => editTitleInput() }> 	&#10004; </button>
-                            <button className={styles.btnList} onClick={ () => setEdit( true ) }> 	&#10006; </button>
-                        </>
+                        <Form form={form} className={styles.formEdit} onFinish = { handleChangeTodoTitle   }>
+                            <Form.Item
+                                name="title"
+                                rules={ titleValidationRules  }
+                                validateTrigger={'onChange'}
+                                initialValue = {task.title} 
+                            >
+                                <Input style={{width: '225px', justifyContent:'center'}}/>    
+     
+                            </Form.Item>
+                            <Form.Item>
+                            <Button icon={ <CheckOutlined  /> } className={styles.btnList}  htmlType='submit'/>
+                            </Form.Item>
+                            <Form.Item>
+                            <Button icon={ <CloseOutlined /> } className={styles.btnList} onClick={ () => handleClose() }/> 
+                            </Form.Item>
+                        </Form>
                     )  
-            
-            }
-
-                <img src={deleteIcon} className={styles.btnList}
-                    onClick = {() => onClickDelete(task.id)}
-                />
+                }
+                <Button type='text' className={styles.btnList}>
+                    <img src={deleteIcon} className={styles.btnListImg} 
+                        onClick = {() => onClickDelete(task.id)}
+                        />
+                </Button>
          </div>
     )
 }

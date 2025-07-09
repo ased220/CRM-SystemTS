@@ -37,7 +37,9 @@ export interface UserRegistration {
   username: string; 
   password: string; 
   email: string; 
-  phoneNumber?: string; 
+  phoneNumber?: string;
+  repeatPassword?:string;
+ 
 }
 
 export interface ResponseUserData{
@@ -67,7 +69,7 @@ export interface Profile {
   isBlocked: boolean; 
   roles: Role[]; 
   phoneNumber: string; 
-}
+} 
 
 export interface ProfileRequest { 
   username: string; 

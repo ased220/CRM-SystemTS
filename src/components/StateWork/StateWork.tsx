@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { TodoInfo, TodoInfoCheck } from "../../types/Interface";
 import styles from './stateWork.module.scss'
+import { Button } from "antd";
 
 interface Props{
     statusList:TodoInfo
@@ -14,16 +15,18 @@ export default function StateWork({statusList, setStatus }:Props){
     return (
         
         <div className={styles.link}>
-          <button 
+          <Button 
+            type="text"
             className={ activeFilterStatus == 'all'? `${styles.buttonFilter} ${styles.active}`: styles.buttonFilter}
             onClick={() => {
                 setStatus("all")
                 setActiveFilterStatus('all')
                 }
             }
-          >{ `Все (${statusList.all})` }</button>
+            >{ `Все (${statusList.all})` }</Button>
 
-          <button
+          <Button
+            type="text"
             className={ activeFilterStatus == 'inWork'? `${styles.buttonFilter} ${styles.active}`: styles.buttonFilter}
             onClick={() =>{ 
                 setStatus("inWork")
@@ -31,9 +34,10 @@ export default function StateWork({statusList, setStatus }:Props){
                 
                 }
             }
-          > { `В процессе (${statusList.inWork})` }</button>
+          > { `В процессе (${statusList.inWork})` }</Button>
 
-          <button
+          <Button
+            type="text"
             className={ activeFilterStatus == 'completed'? `${styles.buttonFilter} ${styles.active}`: styles.buttonFilter}
             onClick={() => {
                 setStatus("completed")
@@ -41,7 +45,7 @@ export default function StateWork({statusList, setStatus }:Props){
 
                 }
             }
-          > { `Готово (${statusList.completed})` } </button>
+          > { `Готово (${statusList.completed})` } </Button>
          
         </div>
     )
