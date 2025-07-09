@@ -27,7 +27,10 @@ export async function registrationRequest(userData: UserRegistration) {
           const response = await baseApi.post('/auth/signup', userData);
           return response.status
       }catch(error){
-          return error.status
+          if (error && typeof error === 'object' && 'status' in error) {
+              return (error as { status: number }).status;
+          }
+          return 404;
       }
 }
 
@@ -50,7 +53,10 @@ export async function refreshTokenUpdateRequest(refToken: string){
     
   } catch (error) {
     
-    return error.status    
+      if (error && typeof error === 'object' && 'status' in error) {
+          return (error as { status: number }).status;
+      }
+      return 404;  
   }
 }
 

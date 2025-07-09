@@ -1,3 +1,4 @@
+import type { Rule } from "antd/es/form";
 
 export const titleValidationRules  = 
 [
@@ -18,7 +19,7 @@ export const titleValidationRules  =
 type ValidChar = 'yes' | 'no' | null;
 
 export const titleValidationAuth = (minCount: number, onlyEN: ValidChar = null) => {
-    const rules = [
+    const rules: Rule[] = [
         {
             required: true,
             message: 'Поле обязательно'

@@ -22,24 +22,27 @@ export const userLoginAction = createAsyncThunk(
     try {
         return await loginRequest(authData);        
     } catch (error) {
-        console.log('Ошибка',error);
 
-        return rejectWithValue(error.status || 500);
-      };
+        if (typeof error === 'object' && error !== null && 'status' in error) {
+            return rejectWithValue((error as {status: number}).status);
+        }      
+    };
     }    
 );
 
 export const refreshTokenAction = createAsyncThunk(
     'auth/refresh',
-    async (refToken:string) => {
+    async (refToken:string, {rejectWithValue}) => {
         try {
             const result = await refreshTokenUpdateRequest(refToken);
             
             return result;
 
         } catch (error) {
-            console.error('44 Refresh LoginSlice', error);
-        }
+            if (typeof error === 'object' && error !== null && 'status' in error) {
+                return rejectWithValue((error as {status: number}).status);
+            }
+            return rejectWithValue(500);        }
     }
 )
 
@@ -70,17 +73,18 @@ const loginSlice = createSlice({
         // })
         .addCase(userLoginAction.fulfilled, (state, action) => {                        
             
-            if (action.payload.data){                
+            if (action.payload && typeof action.payload === 'object' && 'data' in action.payload) {
+                const payload = action.payload as {data: {accessToken: string; refreshToken: string}; status: number};
                 state.isLogin = true;
-                state.statusLogin = action.payload.status
-                authService.setAccessToken(action.payload.data.accessToken);
-                localStorage.setItem('refreshToken', action.payload.data.refreshToken);
-            }            
+                state.statusLogin = payload.status;
+                authService.setAccessToken(payload.data.accessToken);
+                localStorage.setItem('refreshToken', payload.data.refreshToken);
+            }        
         })
         
         .addCase(userLoginAction.rejected, (state, action) => {
             state.isLogin = false;
-            state.statusLogin = action.payload; 
+            state.statusLogin = action.payload as number ?? 500; 
             })
 
         // Token
@@ -89,12 +93,13 @@ const loginSlice = createSlice({
         })
         .addCase(refreshTokenAction.fulfilled,(state,action) => {
 
-            if (action.payload.accessToken){
-                authService.setAccessToken( action.payload.accessToken);
-                localStorage.setItem('refreshToken', action.payload.refreshToken);
-            }else{
-                state.statusToken = action.payload
-                if (action.payload !== 200){
+             if (action.payload && typeof action.payload === 'object' && 'accessToken' in action.payload) {
+                const payload = action.payload as {accessToken: string; refreshToken: string};
+                authService.setAccessToken(payload.accessToken);
+                localStorage.setItem('refreshToken', payload.refreshToken);
+            } else if (typeof action.payload === 'number') {
+                state.statusToken = action.payload;
+                if (action.payload !== 200) {
                     state.isLogin = false;
                 }
             }       

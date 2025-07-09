@@ -10,12 +10,12 @@ interface ProfileState {
 const initialState:ProfileState={ 
     user: {
         id: 0,
-        username: 'no', 
-        email: 'no',
+        username: '', 
+        email: '',
         date: '', 
         isBlocked: false, 
         roles: [], 
-        phoneNumber: 'no',
+        phoneNumber: '',
     },
     status:"idle"
 }

@@ -55,5 +55,6 @@ export async function editTodo(obj: TodoRequest){
     } catch (error) {
 
       console.error(error);
+      throw error;
     }
 }

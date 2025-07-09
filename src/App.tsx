@@ -20,7 +20,6 @@ function App() {
     const { statusToken } = useAppSelector((state: RootState) => state.login)
     
     
-    console.log(location);
     
     useEffect(() => {
         const checkAuth = async () =>{
@@ -28,23 +27,16 @@ function App() {
 
                 const refToken = localStorage.getItem('refreshToken');
                 if (refToken){
-                    console.log(1);
                     
                     await dispatch( refreshTokenAction(refToken));
-                    console.log(2);
                 }else{
-                    console.log(3);
                     dispatch(resetStatusLogin())
                     navigate('/login')
                 }
                 if (statusToken === 401){
-                    console.log(4);
                     navigate('/login')
                 }
             }
-            // }else{
-            //     navigate('/login')
-            // }
         };
         checkAuth();
     }, [location])

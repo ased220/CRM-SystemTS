@@ -27,7 +27,6 @@ export default function SignIn(){
         }
     }, [isLogin]);
 
-    console.log(statusLogin, isLogin);
     
     useEffect(() => {
         if (statusLogin === 400) {
@@ -42,30 +41,6 @@ export default function SignIn(){
     const handlerLogin = async(values:AuthData) =>{
         
             await dispatch(userLoginAction(values));
-
-            // console.log(2, statusLogin);
-            // if (isLogin === true ){
-            //     console.log(3, isLogin);
-            //     navigate('/')
-            // }     
-            // if (statusLogin === 400){
-            //     api.open({
-            //         message: 'Bad Request',
-            //         description:'Ошибка десериализации запроса или неверный ввод'
-            //     })
-            // } 
-            // if (statusLogin === 401){
-            //     api.open({
-            //         message: 'Unauthorized:',
-            //         description:' Неверные учетные данные'
-            //     })
-            // } 
-            // if (statusLogin === 500){
-            //     api.open({
-            //         message: 'Internal Server Error',
-            //         description:'Внутренняя ошибка сервера'
-            //     })
-            // }
         
     }
    
