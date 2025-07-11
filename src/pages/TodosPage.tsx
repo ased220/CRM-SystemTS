@@ -58,7 +58,7 @@ export default function TodosPage ({pathname}:TodosPage){
         }
       } catch (error) {
         errorAlert.open({
-          message:'Ошибка! Не удалось ПОлучить список задач'
+          message:'Ошибка! Не удалось Получить список задач'
         })
         console.error(error)
       }

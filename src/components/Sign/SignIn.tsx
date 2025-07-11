@@ -40,7 +40,7 @@ export default function SignIn(){
 
     const handlerLogin = async(values:AuthData) =>{
         
-            await dispatch(userLoginAction(values));
+            await dispatch(userLoginAction(values));    
         
     }
    

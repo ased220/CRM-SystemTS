@@ -38,7 +38,6 @@ export async function registrationRequest(userData: UserRegistration) {
 export async function loginRequest(authData: AuthData){
     
         const response = await baseApi.post('/auth/signin',authData);
-        // console.log('loginAction API 78',response);        
         return {data: response.data, status: response.status};
     
 }
@@ -48,7 +47,6 @@ export async function refreshTokenUpdateRequest(refToken: string){
     const response = await baseApi.post<Token>('/auth/refresh', { 
       refreshToken: refToken 
     });
-    // console.log('Ошибка',response);
     return response.data;
     
   } catch (error) {

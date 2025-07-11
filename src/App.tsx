@@ -23,7 +23,7 @@ function App() {
     
     useEffect(() => {
         const checkAuth = async () =>{
-            if (location.pathname !== '/login'){
+            if (location.pathname !== '/login' && location.pathname !== '/registration'){
 
                 const refToken = localStorage.getItem('refreshToken');
                 if (refToken){

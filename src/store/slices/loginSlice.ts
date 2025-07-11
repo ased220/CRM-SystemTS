@@ -57,7 +57,6 @@ const loginSlice = createSlice({
             localStorage.removeItem('refreshToken');
             authService.clearAccessToken();
             state.isLogin = false
-
         },
         resetStatusLogin: (state) => {
             state.statusLogin = null;

@@ -18,18 +18,32 @@ export default function Profile(){
     }, [dispatch])
     
     if( status === 'loading'){
-        return <Text> Загрузка </Text>
+        return(
+            <div className="page">
+                <Text> Загрузка </Text>
+            </div>
+        )
     }
     if( status === 'failed'){
-        return <Text> не удалось отобразить профиль</Text>
+        return(
+            <div className="page">
+                <Text> не удалось отобразить профиль</Text>
+            </div>
+        )
     }
     return(
-        <>
+        <div className="page">
             <ul>
+                <Text >Имя пользователя: </Text>
                 <li> {user.username} </li>
+                <Text>Email:</Text>
                 <li> {user.email} </li>
-                <li> {user.phoneNumber} </li>
+                <Text>Номер телефона:</Text>
+                { user.phoneNumber.length > 0?
+                    <li> {user.phoneNumber} </li>:
+                    <li> Отсутствует </li>
+                }
             </ul>
-        </>
+        </div>
     )
 }
