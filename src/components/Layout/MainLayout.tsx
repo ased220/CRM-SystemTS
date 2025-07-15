@@ -16,7 +16,7 @@ const items: MenuItem[] = [
 export default function MainLayout(){
 
     const dispatch = useAppDispatch();
-
+ 
     const [collapsed, setCollapsed] = useState(false);
     const toggleCollapsed = () => { setCollapsed(!collapsed); };
     const navigate = useNavigate()
@@ -50,9 +50,7 @@ export default function MainLayout(){
                     onClick={handleMenu}
                     />
             </div>
-            {/* <div className="page" > */}
                 <Outlet />
-            {/* </div> */}
         </>
     )
 }

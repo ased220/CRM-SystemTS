@@ -11,11 +11,12 @@ export default function Profile(){
     const { user, status} = useAppSelector((state) => state.profile)
 
     useEffect(() => {
-      
-        dispatch(getProfile())
-        
-        
-    }, [dispatch])
+            setTimeout(() => {
+                
+                dispatch(getProfile())
+            }, 150);
+            
+    }, [])
     
     if( status === 'loading'){
         return(
@@ -39,9 +40,9 @@ export default function Profile(){
                 <Text>Email:</Text>
                 <li> {user.email} </li>
                 <Text>Номер телефона:</Text>
-                { user.phoneNumber.length > 0?
-                    <li> {user.phoneNumber} </li>:
-                    <li> Отсутствует </li>
+                { user.phoneNumber.length > 0
+                    ? <li> {user.phoneNumber} </li>
+                    : <li> Отсутствует </li>
                 }
             </ul>
         </div>

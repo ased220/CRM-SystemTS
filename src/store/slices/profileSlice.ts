@@ -26,11 +26,10 @@ export const getProfile = createAsyncThunk(
     async() => {
         try {
             const result = ProfileRequest();
-            ;
 
             return result;
         } catch (error) {
-            console.log(error);
+            console.log('Перебросил в кетч',error);
         }
     }
 )

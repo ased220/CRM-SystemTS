@@ -1,17 +1,21 @@
 import axios from "axios";
 import { authService } from "../constants/authService";
-import type { AuthData, Token, UserRegistration } from "../types/Interface";
+import type { AuthData, Profile, Token, UserRegistration } from "../types/Interface";
 
 
 const baseApi = axios.create({
   baseURL: 'https://easydev.club/api/v1',
 })
 
+const profileApi = axios.create({
+  baseURL: 'https://easydev.club/api/v1',
+})
 
-baseApi.interceptors.request.use(
+profileApi.interceptors.request.use(
   config => {
     const accessToken = authService.getAccessToken();
-
+    console.log('вот тут ацесс токен', accessToken);
+    
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
@@ -47,6 +51,7 @@ export async function refreshTokenUpdateRequest(refToken: string){
     const response = await baseApi.post<Token>('/auth/refresh', { 
       refreshToken: refToken 
     });
+    console.log(2);
     return response.data;
     
   } catch (error) {
@@ -59,11 +64,15 @@ export async function refreshTokenUpdateRequest(refToken: string){
 }
 
 //Profile
-export async function ProfileRequest(){
+export const ProfileRequest = async(): Promise<Profile | Error> =>{
   try {
-    const response = await baseApi.get('/user/profile');
+    const response = await profileApi.get('/user/profile');
+    console.log(1);
+    
     return response.data
-  } catch (error) {
-      return error
+  } catch (error:any) {
+    console.log(3,error);
+    
+    return error.response.status  
   }
 }

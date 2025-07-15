@@ -93,6 +93,7 @@ const loginSlice = createSlice({
         .addCase(refreshTokenAction.fulfilled,(state,action) => {
 
              if (action.payload && typeof action.payload === 'object' && 'accessToken' in action.payload) {
+                state.isLogin = true;
                 const payload = action.payload as {accessToken: string; refreshToken: string};
                 authService.setAccessToken(payload.accessToken);
                 localStorage.setItem('refreshToken', payload.refreshToken);

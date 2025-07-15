@@ -19,8 +19,6 @@ function App() {
     const dispatch = useAppDispatch()
     const { statusToken } = useAppSelector((state: RootState) => state.login)
     
-    
-    
     useEffect(() => {
         const checkAuth = async () =>{
             if (location.pathname !== '/login' && location.pathname !== '/registration'){
@@ -33,21 +31,21 @@ function App() {
                     dispatch(resetStatusLogin())
                     navigate('/login')
                 }
-                if (statusToken === 401){
-                    navigate('/login')
-                }
+                // if (statusToken === 401){
+                //     navigate('/login')
+                // }
             }
         };
         checkAuth();
-    }, [location])
-    
+    }, [location, dispatch, navigate])
+
     useEffect(() => {
         if (statusToken === 401){
             
             navigate('/login')
         }
         
-    }, [statusToken ])
+    }, [ statusToken ])
     
     return(
         
@@ -55,7 +53,7 @@ function App() {
         <>        
             <Routes>
                 <Route path="/" element={<MainLayout />}>
-                    <Route index element={<TodosPage pathname = {location.pathname} />} />
+                    <Route index element={<TodosPage pathname = "/" />} />
                     <Route path="/profile" element={<Profile />} />
                 </Route>
                     <Route path="/registration" element={ <SignUp /> } />

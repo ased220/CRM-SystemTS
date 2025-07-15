@@ -40,11 +40,6 @@ export default function TodosPage ({pathname}:TodosPage){
       }; 
     }, [pathname, status]);
 
-    useEffect(() => {
-      
-      reloadList()
-      
-    },[status]);
     
     const reloadList = async() => {
       try {
@@ -66,7 +61,7 @@ export default function TodosPage ({pathname}:TodosPage){
 
     const listItemkMemo = useMemo(()=>{
         return <ListItem tasks = {tasks} reloadList = {reloadList}/>
-    },[tasks]) // нифига не работает, все также ререндерится
+    },[tasks]) 
     
   return (
     
