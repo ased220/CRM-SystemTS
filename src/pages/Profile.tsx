@@ -10,12 +10,12 @@ export default function Profile(){
 
     const { user, status} = useAppSelector((state) => state.profile)
 
-    useEffect(() => {
-            setTimeout(() => {
+    // useEffect(() => {
+    //         setTimeout(() => {
                 
-                dispatch(getProfile())
-            }, 500);
-    }, [])
+    //             dispatch(getProfile())
+    //         }, 500);
+    // }, [])
     
     if( status === 'loading'){
         return(

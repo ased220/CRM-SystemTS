@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import { refreshTokenAction, resetStatusLogin } from "./store/slices/loginSlice";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import type { RootState } from "./store/store";
+import { getProfile } from "./store/slices/profileSlice";
 
 
 function App() {
@@ -17,7 +18,7 @@ function App() {
     const navigate = useNavigate();
     
     const dispatch = useAppDispatch()
-    const { statusToken } = useAppSelector((state: RootState) => state.login)
+    const { isLogin } = useAppSelector((state: RootState) => state.login)
     
     useEffect(() => {
         const checkAuth = async () =>{
@@ -39,14 +40,20 @@ function App() {
         checkAuth();
     }, [location, dispatch, navigate])
 
-    useEffect(() => {
-        if (statusToken === 401){
+    // useEffect(() => {
+    //     if (statusToken === 401){
             
-            navigate('/login')
-        }
+    //         navigate('/login')
+    //     }
         
-    }, [ statusToken ])
-    
+    // }, [ statusToken ])
+    useEffect(() => {
+        if (isLogin){
+                
+            dispatch(getProfile())
+        }
+    }, [isLogin])
+
     return(
         
         
