@@ -14,8 +14,7 @@ export default function Profile(){
             setTimeout(() => {
                 
                 dispatch(getProfile())
-            }, 150);
-            
+            }, 500);
     }, [])
     
     if( status === 'loading'){
