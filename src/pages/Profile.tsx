@@ -1,21 +1,11 @@
-import { useAppDispatch, useAppSelector } from "../store/hooks"
-import { useEffect } from "react";
-import { getProfile } from "../store/slices/profileSlice";
+import { useAppSelector } from "../store/hooks"
 import { Typography } from "antd";
 
 const { Text } = Typography
 export default function Profile(){
 
-    const dispatch = useAppDispatch();
 
     const { user, status} = useAppSelector((state) => state.profile)
-
-    // useEffect(() => {
-    //         setTimeout(() => {
-                
-    //             dispatch(getProfile())
-    //         }, 500);
-    // }, [])
     
     if( status === 'loading'){
         return(

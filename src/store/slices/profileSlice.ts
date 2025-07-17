@@ -29,7 +29,7 @@ export const getProfile = createAsyncThunk(
 
             return result;
         } catch (error) {
-            console.log('Перебросил в кетч',error);
+            return error
         }
     }
 )

@@ -32,21 +32,12 @@ function App() {
                     dispatch(resetStatusLogin())
                     navigate('/login')
                 }
-                // if (statusToken === 401){
-                //     navigate('/login')
-                // }
+
             }
         };
         checkAuth();
     }, [location, dispatch, navigate])
 
-    // useEffect(() => {
-    //     if (statusToken === 401){
-            
-    //         navigate('/login')
-    //     }
-        
-    // }, [ statusToken ])
     useEffect(() => {
         if (isLogin){
                 
