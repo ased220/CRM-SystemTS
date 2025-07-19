@@ -18,15 +18,13 @@ function App() {
     const navigate = useNavigate();
     
     const dispatch = useAppDispatch()
-    const { isLogin } = useAppSelector((state: RootState) => state.login)
-    
+    const { isLogin, statusToken } = useAppSelector((state: RootState) => state.login)
     useEffect(() => {
         const checkAuth = async () =>{
             if (location.pathname !== '/login' && location.pathname !== '/registration'){
 
                 const refToken = localStorage.getItem('refreshToken');
                 if (refToken){
-                    
                     await dispatch( refreshTokenAction(refToken));
                 }else{
                     dispatch(resetStatusLogin())
@@ -37,6 +35,13 @@ function App() {
         };
         checkAuth();
     }, [location, dispatch, navigate])
+    useEffect(() => {
+        if (statusToken === 401){
+            
+            navigate('/login')
+        }
+        
+    }, [ statusToken ])
 
     useEffect(() => {
         if (isLogin){
