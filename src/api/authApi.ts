@@ -1,21 +1,19 @@
 import axios from "axios";
 import { authService } from "../constants/authService";
-import type { AuthData, Profile, Token, UserRegistration } from "../types/Interface";
+import type { AuthData, Profile, Token, UserRegistration } from "../types/authInterface";
 
-
+const baseURL = 'https://easydev.club/api/v1';
 const baseApi = axios.create({
-  baseURL: 'https://easydev.club/api/v1',
+  baseURL: baseURL,
 })
 
 const profileApi = axios.create({
-  baseURL: 'https://easydev.club/api/v1',
+  baseURL: baseURL,
 })
 
 profileApi.interceptors.request.use(
   config => {
-    const accessToken = authService.getAccessToken();
-    console.log('вот тут ацесс токен', accessToken);
-    
+    const accessToken = authService.getAccessToken();    
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
     }
@@ -23,7 +21,7 @@ profileApi.interceptors.request.use(
   },
   function (error) {
     return Promise.reject(error);
-  }
+  } 
 );
 
 export async function registrationRequest(userData: UserRegistration) {
@@ -51,7 +49,7 @@ export async function refreshTokenUpdateRequest(refToken: string){
     const response = await baseApi.post<Token>('/auth/refresh', { 
       refreshToken: refToken 
     });
-    console.log(2);
+
     return response.data;
     
   } catch (error) {
@@ -66,13 +64,10 @@ export async function refreshTokenUpdateRequest(refToken: string){
 //Profile
 export const ProfileRequest = async(): Promise<Profile | Error> =>{
   try {
-    const response = await profileApi.get('/user/profile');
-    console.log(1);
-    
+    const response = await profileApi.get('/user/profile');    
     return response.data
-  } catch (error:any) {
-    console.log(3,error);
-    
+
+  } catch (error:any) {    
     return error.response.status  
   }
 }

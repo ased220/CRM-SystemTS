@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { UserRegistration } from "../../types/Interface";
+import type { UserRegistration } from "../../types/authInterface";
 import { registrationRequest } from "../../api/authApi";
 
 

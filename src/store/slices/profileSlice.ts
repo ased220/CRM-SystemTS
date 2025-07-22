@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { Profile } from "../../types/Interface";
+import type { Profile } from "../../types/authInterface";
 import { ProfileRequest } from "../../api/authApi";
 
 interface ProfileState {

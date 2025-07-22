@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { deleteTodo, editTodo } from '../../api/api'
 import deleteIcon from '../../assets/delete.svg'
 import EditIcon from '../../assets/edit.svg'
-import type { Todo } from '../../types/Interface';
+import type { Todo } from '../../types/todoInterface';
 import styles from './taskCard.module.scss'
 import { Button, Checkbox, Form, Input, notification, Typography } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';

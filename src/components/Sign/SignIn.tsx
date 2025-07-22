@@ -1,11 +1,9 @@
 import { Button, Checkbox, Flex, Form, Input, notification } from 'antd'
-import skeleton from '../../assets/illustration.png'
-import imgAboveText from '../../assets/imgAboveText.svg' // не знаю как назвать
-import circle from '../../assets/Vector.png'
+import imgAboveText from '../../assets/imgAboveText.svg' 
 import google from '../../assets/google.svg'
 import './sign.scss'
 import { Typography } from 'antd';
-import type { AuthData } from '../../types/Interface'
+import type { AuthData } from '../../types/authInterface'
 import {  userLoginAction } from '../../store/slices/loginSlice'
 import { Link, useNavigate } from "react-router";
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
@@ -44,7 +42,6 @@ export default function SignIn(){
         
     }
    
-
     const loginItemMemo = useMemo(()=>{
         return (
             <Flex vertical className='content'>
@@ -94,15 +91,10 @@ export default function SignIn(){
     },[]) 
 
     return (
-        <div className='container'>
+        <>
             {contextHolder}
-
-            <img src={circle} alt="" className='circle'/>   
-            <Flex>
-                <img src={skeleton} alt="skeleton" className='illustration' />
-                {loginItemMemo}
-            </Flex>
-        </div>
+            {loginItemMemo}
+        </>
 
     )
 }

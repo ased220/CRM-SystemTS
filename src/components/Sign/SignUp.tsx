@@ -1,17 +1,14 @@
 import { Button, Checkbox, Flex, Form, Input, notification } from 'antd'
-import skeleton from '../../assets/illustration.png'
-import imgAboveText from '../../assets/imgAboveText.svg' // не знаю как назвать
-import circle from '../../assets/Vector.png'
-// import google from '../../assets/google.svg'
+import imgAboveText from '../../assets/imgAboveText.svg'
 import './sign.scss'
 import { Typography } from 'antd';
 import { resetStatus, userRegistration } from '../../store/slices/registrationSlice'
-import type { UserRegistration } from '../../types/Interface'
+import type { UserRegistration } from '../../types/authInterface'
 import type { RootState } from '../../store/store'
 import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router'
 import { useAppDispatch, useAppSelector } from '../../store/hooks'
-import { titleValidationAuth } from '../../constants/validation'
+import { EMAIL_RULES, LOGIN_RULES, PASSWORD_RULES, PHONE_RULES, REPEAT_PASSWORD_RULES, USERNAME_RULES } from '../../constants/validation'
 
 
 const { Text, Title  } = Typography
@@ -76,78 +73,70 @@ export default function SignUp(){
     }
 
      return (
-        <div className='container'>
+        <>
             {contextHolder}
-            <img src={circle} alt="" className='circle'/>   
-            <Flex>
-                <img src={skeleton} alt="skeleton" className='illustration' />
                 <Flex vertical className='content'>
                     <Flex vertical className='loginAccount'>
                     <img src={imgAboveText} className='imgAboveText'/>
                         <Title level={3} style={{margin: '0'}}> Register to your Account</Title>
-                        {/* <Button className='buttonGoogle'> <img src={google} /> Continue with Google </Button> */}
+                        
                         <Text style={{textAlign: 'center'}}>------------- or Sign in with Email -------------</Text>
 
                         <Form form ={form} onFinish={handleCreateAccount} className='loginForm' layout='vertical'>
 
                             <Form.Item
                                 className='formItem'
-                                name = 'username' 
-                                label = 'Username'
-                                rules = {titleValidationAuth(1,'no')} 
+                                name="username"
+                                label="Username"
+                                rules={USERNAME_RULES}
                                 >
                                 <Input placeholder="Username" className='inputForm' maxLength={60}/>
-                            </Form.Item>
+                                </Form.Item>
 
-                            <Form.Item
+                                <Form.Item
                                 className='formItem'
-                                name = 'login' 
-                                label = 'Login'
-                                rules = { titleValidationAuth(2, 'yes') } 
+                                name="login"
+                                label="Login"
+                                rules={LOGIN_RULES}
                                 >
                                 <Input placeholder="Login" className='inputForm' maxLength={60}/>
-                            </Form.Item>
+                                </Form.Item>
 
-                            <Form.Item
+                                <Form.Item
                                 className='formItem'
-                                name = 'password' 
-                                label = 'Password'
-                                rules = { titleValidationAuth(6,null) }
+                                name="password"
+                                label="Password"
+                                rules={PASSWORD_RULES}
                                 >
                                 <Input.Password placeholder="*****************" className='inputForm' maxLength={60}/>
-                            </Form.Item>
-                            
-                            <Form.Item
+                                </Form.Item>
+
+                                <Form.Item
                                 className='formItem'
-                                name = 'repeatPassword' 
-                                label = 'Repeat password'
-                                rules = { titleValidationAuth(6,null) }
+                                name="repeatPassword"
+                                label="Repeat password"
+                                rules={REPEAT_PASSWORD_RULES}
                                 >
                                 <Input.Password placeholder="*****************" className='inputForm' maxLength={60}/>
-                            </Form.Item>
+                                </Form.Item>
 
-                            <Form.Item
+                                <Form.Item
                                 className='formItem'
-                                name = 'email' 
-                                label = 'Email'
-                                rules={[{ type: 'email', required: true, message:'****@**.**' }]}
+                                name="email"
+                                label="Email"
+                                rules={EMAIL_RULES}
                                 >
                                 <Input placeholder="mail@abc.com" className='inputForm'/>
-                            </Form.Item>
+                                </Form.Item>
 
-                            <Form.Item
-                            className='formItem'
-                            name="phoneNumber"
-                            label="phone"
-                            rules={[
-                                {
-                                    pattern: /^\+7\d{10}$/,
-                                    message: 'Введите номер в формате +7XXXXXXXXXX'
-                                },
-                            ]}
-                            >
-                                <Input placeholder="+7 (123) 456-78-90" className='inputForm' />
-                            </Form.Item>
+                                <Form.Item
+                                className='formItem'
+                                name="phoneNumber"
+                                label="Phone"
+                                rules={PHONE_RULES}
+                                >
+                                <Input placeholder="+7 (123) 456-78-90" className='inputForm'/>
+                                </Form.Item>
 
                             <Form.Item>
                                 <Flex className='forgotPsw'>
@@ -175,8 +164,8 @@ export default function SignUp(){
                     </Flex>
 
                 </Flex>
-            </Flex>
-        </div>
-
+        </>
+        
+        
     )
 }

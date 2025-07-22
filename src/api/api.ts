@@ -1,4 +1,4 @@
-import type { MetaResponse, Todo, TodoInfo, TodoInfoCheck, TodoRequest, } from "../types/Interface"
+import type { MetaResponse, Todo, TodoInfo, TodoInfoCheck, TodoRequest, } from "../types/todoInterface"
 import axios from 'axios';
 
 const baseApi = axios.create({

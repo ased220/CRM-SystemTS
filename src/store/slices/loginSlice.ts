@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { AuthData   } from "../../types/Interface";
+import type { AuthData   } from "../../types/authInterface";
 import { authService } from "../../constants/authService";
 import {loginRequest, refreshTokenUpdateRequest } from "../../api/authApi";
 
