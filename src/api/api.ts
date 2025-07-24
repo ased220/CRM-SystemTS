@@ -1,13 +1,14 @@
-import type { MetaResponse, Todo, TodoInfo, TodoInfoCheck, TodoRequest } from "../types/Interface"
+import type { MetaResponse, Todo, TodoInfo, TodoInfoCheck, TodoRequest, } from "../types/todoInterface"
 import axios from 'axios';
 
-const todoApi = axios.create({
-  baseURL: 'https://easydev.club/api/v1'
+const baseApi = axios.create({
+  baseURL: 'https://easydev.club/api/v1',
 })
+
 
 export async function addTodo(obj: TodoRequest):Promise<Todo> { 
     try {
-      const response = await todoApi.post<Todo>('/todos', obj)
+      const response = await baseApi.post<Todo>('/todos', obj)
       return response.data
 
     } catch (error) {
@@ -19,7 +20,7 @@ export async function addTodo(obj: TodoRequest):Promise<Todo> {
 export async function editTodo(obj: TodoRequest){
   
     try {
-        const response = await todoApi.put(`/todos/${obj.id}`, obj) 
+        const response = await baseApi.put(`/todos/${obj.id}`, obj) 
         return response.data
 
     } catch (error) {
@@ -31,7 +32,7 @@ export async function editTodo(obj: TodoRequest){
 
     try {
 
-      await todoApi.delete(`/todos/${id}`);
+      await baseApi.delete(`/todos/${id}`);
       return ;
 
     } catch (error) {
@@ -44,7 +45,7 @@ export async function editTodo(obj: TodoRequest){
   
     try {
 
-        const response = await todoApi.get<Promise<MetaResponse<Todo, TodoInfo >>>('/todos',{
+        const response = await baseApi.get<Promise<MetaResponse<Todo, TodoInfo >>>('/todos',{
           params: {
             filter: status
           }
@@ -57,5 +58,3 @@ export async function editTodo(obj: TodoRequest){
       throw error;
     }
 }
-
-  

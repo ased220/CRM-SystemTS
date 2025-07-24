@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import InputTask from "../components/AddTask/AddTask" 
 import ListItem from  "../components/ListItem/ListItem" 
 import { filterTodo } from "../api/api"
-import type { Todo, TodoInfo, MetaResponse, TodoInfoCheck} from "../types/Interface"
+import type { Todo, TodoInfo, MetaResponse, TodoInfoCheck} from "../types/todoInterface"
 import StateWork from "../components/StateWork/StateWork"
 import { notification } from "antd"
 
@@ -40,11 +40,6 @@ export default function TodosPage ({pathname}:TodosPage){
       }; 
     }, [pathname, status]);
 
-    useEffect(() => {
-      
-      reloadList()
-      
-    },[status]);
     
     const reloadList = async() => {
       try {
@@ -58,7 +53,7 @@ export default function TodosPage ({pathname}:TodosPage){
         }
       } catch (error) {
         errorAlert.open({
-          message:'Ошибка! Не удалось совершить действие'
+          message:'Ошибка! Не удалось Получить список задач'
         })
         console.error(error)
       }
@@ -66,7 +61,7 @@ export default function TodosPage ({pathname}:TodosPage){
 
     const listItemkMemo = useMemo(()=>{
         return <ListItem tasks = {tasks} reloadList = {reloadList}/>
-    },[tasks]) // нифига не работает, все также ререндерится
+    },[tasks]) 
     
   return (
     

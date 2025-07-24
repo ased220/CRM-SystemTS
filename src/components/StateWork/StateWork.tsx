@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { TodoInfo, TodoInfoCheck } from "../../types/Interface";
+import type { TodoInfo, TodoInfoCheck } from "../../types/todoInterface";
 import styles from './stateWork.module.scss'
 import { Button } from "antd";
 

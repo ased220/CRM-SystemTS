@@ -1,6 +1,6 @@
 
 import { Typography } from "antd";
-import type { Todo } from "../../types/Interface"
+import type { Todo } from "../../types/todoInterface"
 import TaskCard from "../TaskCard/TaskCard"
 import styles from './listItem.module.scss'
 
