@@ -67,13 +67,10 @@ const loginSlice = createSlice({
     },
     extraReducers: (builder) => {
     builder
-        // .addCase(userLoginAction.pending, (state) => {
-        //     // state.statusLogin = null;
-        // })
         .addCase(userLoginAction.fulfilled, (state, action) => {                        
             
             if (action.payload && typeof action.payload === 'object' && 'data' in action.payload) {
-                const payload = action.payload as {data: {accessToken: string; refreshToken: string}; status: number};
+                const payload = action.payload as {data: {accessToken: string; refreshToken: string}; status: number};                
                 state.isLogin = true;
                 state.statusLogin = payload.status;
                 authService.setAccessToken(payload.data.accessToken);

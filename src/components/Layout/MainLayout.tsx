@@ -1,4 +1,4 @@
-import { MenuFoldOutlined, MenuUnfoldOutlined, SmileOutlined, UnorderedListOutlined, UserAddOutlined } from "@ant-design/icons";
+import { MenuFoldOutlined, MenuUnfoldOutlined, SmileOutlined, TeamOutlined, UnorderedListOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Button, Menu, type MenuProps } from "antd";
 import { useEffect,  useState } from "react";
 import { Outlet, useNavigate } from "react-router";
@@ -7,21 +7,32 @@ import { logout, refreshTokenAction, resetStatusLogin } from "../../store/slices
 import type { RootState } from "../../store/store";
 type MenuItem = Required<MenuProps>["items"][number];
 
-const items: MenuItem[] = [
-{ key: "1", icon: <UnorderedListOutlined />, label: "Список задач" },
-{ key: "2", icon: <SmileOutlined />, label: "Профиль" },
-{ key: "3", icon: <UserAddOutlined />, label: "Выход" },// сейчас интернета нет нужно иконку на подходящую поменять
-];
-
 export default function MainLayout(){
-
+    const {roles} = useAppSelector( state => state.profile.user)
+    
     const dispatch = useAppDispatch();
- 
+    
     const [collapsed, setCollapsed] = useState(false);
     const toggleCollapsed = () => { setCollapsed(!collapsed); };
     const navigate = useNavigate()
+    
+    const baseitems: MenuItem[] = [
+        { key: "1", icon: <UnorderedListOutlined />, label: "Список задач" },
+        { key: "2", icon: <SmileOutlined />, label: "Профиль" },
+        { key: "3", icon: <UserAddOutlined />, label: "Выход" },
+    ];
+    const adminItem: MenuItem = { key: "4", icon: <TeamOutlined />, label: "Пользователи" };
+    
+    const items = roles.includes( "ADMIN" ) ? [...baseitems, adminItem]: baseitems;
+    
+    const handleMenu = (e: {key:string}) => {
+        if( e.key == '1') navigate('/');
+        if( e.key == '2') navigate('/profile');
+        if( e.key == '3') { dispatch(logout()); navigate('/registration') }
+        if( e.key == '4') {navigate('/users')}
+    }
 
-
+    
     const { statusToken } = useAppSelector((state: RootState) => state.login)
 
     useEffect(() => {
@@ -33,9 +44,15 @@ export default function MainLayout(){
                 dispatch(resetStatusLogin())
                 navigate('/login')
             }
+            if (statusToken === 401){
+            
+            navigate('/login')
+        }
         };
             checkAuth();
+
         }, [dispatch, navigate])
+
 
     useEffect(() => {
         if (statusToken === 401){
@@ -44,13 +61,6 @@ export default function MainLayout(){
         }
         
     }, [ statusToken, navigate ])
-    
-    const handleMenu = (e: {key:string}) => {
-        if( e.key == '1') navigate('/');
-        if( e.key == '2') navigate('/profile');
-        if( e.key == '3') { dispatch(logout()); navigate('/registration') }
-    }
-
     return (
         <>
             <div className="navigation" >

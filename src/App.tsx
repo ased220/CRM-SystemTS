@@ -7,8 +7,22 @@ import SignUp from "./components/Sign/SignUp";
 import SignIn from "./components/Sign/SignIn";
 import AuthLayout from "./components/Layout/authLayout/AuthLayout";
 
+import Users from "./pages/Users";
+import { useAppDispatch, useAppSelector } from "./store/hooks";
+import type { RootState } from "./store/store";
+import { useEffect } from "react";
+import { getProfile } from "./store/slices/profileSlice";
+import AdminUserProfile from "./pages/AdminUserProfile";
+
 function App() {
 
+    const { isLogin } = useAppSelector  ((state: RootState) => state.login)
+    const dispatch = useAppDispatch();
+    
+    useEffect(() => {
+            
+            if (isLogin) { dispatch(getProfile()) }
+    }, [isLogin, dispatch   ])
     return(
         
         
@@ -17,6 +31,8 @@ function App() {
                 <Route path="/" element={<MainLayout />}>
                     <Route index element={<TodosPage pathname = "/" />} />
                     <Route path="/profile" element={<Profile />} />
+                    <Route path="/users" element={<Users />} />
+                    <Route path="/AdminUserProfile/:id" element={<AdminUserProfile/>}/>
                 </Route>
                     <Route element = {<AuthLayout />}>
                         <Route path="/registration" element={ <SignUp /> } />
