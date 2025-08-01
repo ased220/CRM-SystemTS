@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import type { ApiError, ApiResponse, MetaResponse, UpdateProfileParams, User, UserFilters } from "../../types/adminInterface";
+import type { ApiError, MetaResponse, UpdateProfileParams, User, UserFilters } from "../../types/adminInterface";
 import { profileUserRequest, updateUserProfileRequest, usersRequest } from "../../api/adminApi";
 
 interface InitialState {
@@ -7,8 +7,8 @@ interface InitialState {
     statusUsers:number,
     userProfile:User,
     totalAmount:number,
-
 } 
+
 const initialState: InitialState = {
     users:[
         {
@@ -37,41 +37,72 @@ const initialState: InitialState = {
 
 
 export const getUsersAction = createAsyncThunk<
-  MetaResponse<User>, 
+  MetaResponse<User[]>, 
   UserFilters,         
   { rejectValue: ApiError } 
 >(
     'admin/users',
-    async (filters: UserFilters = {}, {rejectWithValue }) =>{
+    async (filters: UserFilters , {rejectWithValue }) =>{
         try {
-            return await usersRequest(filters);
-        } catch (error:any) {
-            return rejectWithValue({
-            status: error.response?.status || 500,
-            message: error.response?.data?.message })
+            const response = await usersRequest(filters);
+            return response as MetaResponse<User[]>;} 
+        catch (error:any) {
+            let message = 'Unknown error';
+            let status = 500;
+            
+            if (error.response) {
+                status = error.response.status || 500;
+                if (typeof error.response.data === 'string') {
+                    message = error.response.data;
+                } else if (error.response.data?.message) {
+                    message = error.response.data.message;
+                }
+            } 
+            
+            return rejectWithValue({ status, message });
         }
 })
 
-export const getUserProfileAction = createAsyncThunk(
-    'admin/users/getProfile',
-    async(id:number)=>{
-        try {
-            return await profileUserRequest(id)
-        } catch (error) {
-            return error
-        }
-
+export const getUserProfileAction = createAsyncThunk<
+  MetaResponse<User>, 
+  number,
+  { rejectValue: ApiError }
+>(
+  'admin/users/getProfile',
+  async (id: number, { rejectWithValue }) => {
+    try {
+      return await profileUserRequest(id);
+    } catch (error: any) {
+      return rejectWithValue({
+        status: error.response?.status || 500,
+        message: error.response?.data?.message || 'Unknown error'
+      });
     }
-)
-
+  }
+);
 export const updateUserProfileAction = createAsyncThunk(
     'admin/users/updateProfile',
-    async(updateProfileParams:UpdateProfileParams)=>{
+    async(updateProfileParams:UpdateProfileParams, { rejectWithValue })=>{
         try {
-            return await updateUserProfileRequest(updateProfileParams)
-        } catch (error) {
-            return error
-        }
+            return await updateUserProfileRequest(updateProfileParams) as MetaResponse<User>;
+        } catch (error:any) {
+            let message = 'Unknown error';
+            let status = 500;
+            
+            if (error.response) {
+                status = error.response.status || 500;
+                if (typeof error.response.data === 'string') {
+                    message = error.response.data;
+                } else if (error.response.data?.message) {
+                    message = error.response.data.message;
+                }
+            } else if (error.request) {
+                message = 'No response from server';
+            } else {
+                message = error.message || 'Unknown error';
+            }
+            
+            return rejectWithValue({ status, message });        }
 
     }
 )
@@ -88,16 +119,15 @@ const adminSlice = createSlice({
                 
                 if (action.payload?.data) {
                     
-                    state.users = action.payload.data; 
-                    console.log(action.payload.meta);
-                    
-                    state.totalAmount = action.payload.meta.totalAmount
+                    state.users = action.payload.data;                     
+                    state.totalAmount = action.payload.meta?.totalAmount || 0;
                 }
                 state.statusUsers = action.payload?.status
 
             })
             .addCase(getUsersAction.rejected, (state, action) =>{
-                state.statusUsers = action.payload.status || 500
+            
+                state.statusUsers = action.payload?.status || 500;
             })
            //UserProfile
             .addCase(getUserProfileAction.fulfilled,(state,action) =>{
@@ -110,8 +140,8 @@ const adminSlice = createSlice({
             })
             //updateUserProfile
             .addCase(updateUserProfileAction.fulfilled,(state,action) =>{
-                if (action.payload?.data) {
-                    state.userProfile = action.payload?.data;
+                if (action.payload.data) {
+                    state.userProfile = action.payload.data;
                 }
             })
             .addCase(updateUserProfileAction.rejected,(_,action) =>{

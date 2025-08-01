@@ -1,19 +1,21 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks"
 import { getUsersAction } from "../store/slices/adminSlice";
 import '../styles/users.scss'
-import { Button, Flex, Input, Menu, message, Modal, Pagination, type MenuProps } from "antd";
+import { Button, Flex, Input, Menu, message, Modal, Pagination, Table, Tag, Typography, type MenuProps } from "antd";
 import { ArrowRightOutlined, DeleteOutlined, DownOutlined, SearchOutlined, UpOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 import { blockUserRequest, deleteUserProfileRequest, unblockUserRequest, updateUserRightRequest } from "../api/adminApi";
-import { Roles } from "../types/adminInterface";
+import { Roles, type User } from "../types/adminInterface";
 
+
+const {Text} = Typography;
+const { Title } = Typography;
 export default function Users(){
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { users, statusUsers, totalAmount } = useAppSelector((state) => state.admin);
-
     const [isModalOpen, setIsModalOpen] = useState <boolean>(false);
 
     type ChangeBlock = {
@@ -34,6 +36,7 @@ export default function Users(){
     const [sortByEmail, setSortByEmail] = useState<boolean>(false);
     
     const [paginationState, setPaginationState] = useState<number>(0);
+
     useEffect(() =>{
         dispatch(getUsersAction({offset: paginationState}))
     }
@@ -91,11 +94,8 @@ export default function Users(){
 
     const showChangeRightsModal = (id:number, roles: Roles[])=>{
 
-      const role:boolean = roles.includes(Roles.ADMIN);
-      console.log(role);
-      
+      const role:boolean = roles.includes(Roles.ADMIN);      
       setIsAdmin(role)
-      console.log(isAdmin);
       setIdIsAdmin(id)
       setIsAdminModalOpen(true)
     }
@@ -154,8 +154,7 @@ export default function Users(){
     }
     const showModal = (id: number) => {
       setSelectedUserId(id);
-      setIsBlockModalOpen(true);
-      setIsAdminModalOpen(true)
+      setIsModalOpen(true)
     };
     
     const handleOk = async () => {
@@ -186,29 +185,6 @@ export default function Users(){
       const year = date.getFullYear();
       return `${day}.${month}.${year}`;
     };
-    
-    const getRoleBadge = (role: string) => {
-      let badgeClass = '';
-      switch (role) {
-        case 'USER':
-          badgeClass = 'badge-blue';
-          break;
-          case 'ADMIN':
-            badgeClass = 'badge-red';
-            break;
-            case 'MODERATOR':
-              badgeClass = 'badge-purple';
-              break;
-              default:
-                badgeClass = 'badge-gray';
-              }
-              
-              return (
-                <span className={`badge ${badgeClass}`}>
-        {role}
-      </span>
-    );
-  };
 
   type MenuItem = Required<MenuProps>["items"][number];
 
@@ -232,8 +208,6 @@ const items: MenuItem[] = [
 ];
 
 const onClick: MenuProps["onClick"] = (e) => {
-  // console.log("click", e);
-
     if (e.key === '1'){
       dispatch(getUsersAction({}))
     }else if (e.key === '2'){
@@ -243,99 +217,148 @@ const onClick: MenuProps["onClick"] = (e) => {
     }
   };
 
-
+  const columns = [
+    {
+      title: (
+        <Flex align="center">
+          <Text>Имя</Text>
+          <Button 
+            type="link" 
+            onClick={handleSortByUsername}
+            icon={sortByUsername ? <DownOutlined style={{ color: 'gray' }} /> : <UpOutlined style={{ color: 'gray' }} />}
+          />
+        </Flex>
+      ),
+      dataIndex: 'username',
+      key: 'username',
+      render: (text: string) => <div className="username">{text}</div>,
+    },
+    {
+      title: (
+        <Flex align="center">
+          <Text>Email</Text>
+          <Button 
+            type="link" 
+            onClick={handleSortByEmail}
+            icon={sortByEmail ? <DownOutlined style={{ color: 'gray' }} /> : <UpOutlined style={{ color: 'gray' }} />}
+          />
+        </Flex>
+      ),
+      dataIndex: 'email',
+      key: 'email',
+      render: (text: string) => <div className="email">{text}</div>,
+    },
+    {
+      title: 'Дата регистрации',
+      dataIndex: 'date',
+      key: 'date',
+      render: (text: string) => <div className="registration-date">{formatDate(text)}</div>,
+    },
+    {
+      title: 'Статус',
+      key: 'isBlocked',
+      render: (user: User) => (
+        <Tag color={user.isBlocked ? 'red' : 'green'}>
+          {user.isBlocked ? 'Заблокирован' : 'Активен'}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Роли',
+      key: 'roles',
+      render: (user: User) => (
+        <div className="roles-container">
+          {user.roles.map((role: string) => {
+            let color = '';
+            switch (role) {
+              case 'USER': color = 'blue'; break;
+              case 'ADMIN': color = 'green'; break;
+              case 'MODERATOR': color = 'purple'; break;
+              default: color = 'gray';
+            }
+            return (
+              <Tag color={color} key={role}>
+                {role}
+              </Tag>
+            );
+          })}
+        </div>
+      ),
+    },
+    {
+      title: 'Телефон',
+      dataIndex: 'phoneNumber',
+      key: 'phoneNumber',
+      render: (text: string) => <div className="phone-number">{text || 'Не указан'}</div>,
+    },
+    {
+      title: 'Действия',
+      key: 'actions',
+      render: (user:User) => (
+        <Flex gap="small">
+          <Button onClick={() => navigate(`/AdminUserProfile/${user.id}`)}>
+            <ArrowRightOutlined />
+          </Button>
+          <Button onClick={() => showModal(user.id)}>
+            <DeleteOutlined />
+          </Button>
+          <Button onClick={() => showChangeBlockModal(user.id, user.isBlocked)}>
+            {user.isBlocked ? 'Разблокировать' : 'Заблокировать'}
+          </Button>
+          <Button onClick={() => showChangeRightsModal(user.id, user.roles)}>
+            {user.roles.includes(Roles.ADMIN) ? 'Забрать админку' : 'Дать админку'}
+          </Button>
+        </Flex>
+      ),
+    },
+  ];
 
   return (
-    <div className="users-table-container">
-      <h1 className="table-title">Управление пользователями</h1>
-      <Flex>
-      <Input 
-          placeholder="Поиск по имени или email" 
-          prefix={<SearchOutlined />} 
-          value = {searchText}
-          onChange={(e)=> setSearchText(e.target.value)}
-          />
-      <Button onClick={handleSearch}> search </Button>
-        <Menu onClick={onClick} 
-          style={{ width: 100 }} 
-          mode="vertical" 
-          items={items} />
+     <div className="users-table-container">
+      <Title level={1}  className="table-title">Пользователи</Title>
+      <Flex className="titleContainer">
+        <Title level={3}>Пользователи</Title>
+        <Flex style={{gap:'10px'}}>
+          <Input 
+            className="inputSearchEmail"
+            placeholder="Поиск по имени или email" 
+            prefix={<SearchOutlined />} 
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            
+            />
+          <Button 
+            onClick={handleSearch}
+            style={{height:'50px'}}  
+          >
+              Поиск
+          </Button>
+          <Menu 
+            onClick={onClick} 
+            style={{ width: 100 }} 
+            mode="vertical" 
+            items={items} 
+            />
+        </Flex>
       </Flex>
 
       {statusUsers === -1 && <p className="loading-message">Загрузка данных...</p>}
       {statusUsers === 500 && <p className="error-message">Ошибка загрузки данных</p>}
 
       <div className="table-wrapper">
-        <table className="users-table">
-          <thead>
-            <tr>
-              <th>Имя пользователя 
-                <Button type="link" onClick={ () =>{ handleSortByUsername()}}>
-                {
-                  sortByUsername? <DownOutlined style={{color:'gray'}} />:<UpOutlined style={{color:'gray'}}/>
-                }
-                </Button>
-                </th>
-              <th>Email
-                <Button type="link" onClick={ () =>{ handleSortByEmail()}}>
-                {
-                  sortByEmail? <DownOutlined style={{color:'gray'}} />:<UpOutlined style={{color:'gray'}}/>
-                }
-                </Button>
-              </th>
-              <th>Дата регистрации</th>
-              <th>Статус</th>
-              <th>Роли</th>
-              <th>Телефон</th>
-            </tr>
-          </thead>
-          <tbody>
-            {users.map((user) => (
-              <>
-              <tr key={user.id}>
-                <td>
-                  <div className="username">{user.username}</div>
-                </td>
-                <td>
-                  <div className="email">{user.email}</div>
-                </td>
-                <td>
-                  <div className="registration-date">{formatDate(user.date)}</div>
-                </td>
-                <td>
-                  <span className={`status-badge ${user.isBlocked ? 'blocked' : 'active'}`}>
-                    {user.isBlocked ? '-' : '+'}
-                  </span>
-                </td>
-                <td>
-                  <div className="roles-container">
-                    {user.roles.map(role => (
-                      <React.Fragment key={role}>
-                        {getRoleBadge(role)}
-                      </React.Fragment>
-                    ))}
-                  </div>
-                </td>
-                <td>
-                  <div className="phone-number">{user.phoneNumber || 'Не указан'}</div>
-                </td>
-                <td>
-                    <Button onClick={()=>navigate(`/AdminUserProfile/${user.id}`)}><ArrowRightOutlined/></Button>                
-                    <Button onClick={()=>{showModal(user.id)}}><DeleteOutlined /></Button>                
-                    <Button onClick={ ()=>{showChangeBlockModal(user.id, user.isBlocked)}}> 
-                      {user.isBlocked ? 'Разблокировать' : 'Заблокировать'}
-                    </Button>
-                    <Button onClick={ ()=>{ showChangeRightsModal(user.id,user.roles)}}> 
-                      {user.roles.includes(Roles.ADMIN)? (
-                        'Забрать админку'):( 'Дать админку')}
-                    </Button>                
-                </td>
-              </tr>
-            </>
-          ))}
-          </tbody>
-        </table>
-      <Pagination defaultCurrent={paginationState} total={totalAmount/2} onChange={(e)=>setPaginationState(e-1)} />;
+        <Table
+          columns={columns}
+          dataSource={users.map(user => ({ ...user, key: user.id }))}
+          pagination={false}
+          scroll={{ x: 'max-content' }}
+        />
+        
+        <Pagination 
+          defaultCurrent={1} 
+          total={Math.ceil(totalAmount / 2)} 
+          onChange={(e) => setPaginationState(e - 1)} 
+          style={{ margin:'20px auto 20px auto', textAlign: 'center', justifyContent:'center' }}
+        />
       </div>
           <Modal
               title="Подтверждение удаления"

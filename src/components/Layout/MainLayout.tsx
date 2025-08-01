@@ -36,21 +36,23 @@ export default function MainLayout(){
     const { statusToken } = useAppSelector((state: RootState) => state.login)
 
     useEffect(() => {
-        const checkAuth = async () =>{
-            const refToken = localStorage.getItem('refreshToken');
-            if (refToken){
-                await dispatch( refreshTokenAction(refToken));
-            }else{
-                dispatch(resetStatusLogin())
-                navigate('/login')
-            }
-            if (statusToken === 401){
-            
-            navigate('/login')
-        }
-        };
-            checkAuth();
-
+              
+                const checkAuth = async () =>{
+                    
+                    const refToken = localStorage.getItem('refreshToken');
+                    if (refToken){
+                        await dispatch( refreshTokenAction(refToken));
+                    }else{
+                        dispatch(resetStatusLogin())
+                        navigate('/login')
+                    }
+                    if (statusToken === 401){
+                        
+                        navigate('/login')
+                    }
+                };
+                checkAuth();
+                
         }, [dispatch, navigate])
 
 

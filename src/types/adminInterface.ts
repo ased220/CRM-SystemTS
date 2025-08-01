@@ -21,8 +21,9 @@ export interface User {
 // Интерфейс метаинформации
 
 export interface MetaResponse<T> { 
-  data: T[]
-  meta: {   
+  data: T,
+  status:number
+  meta?: {   
     totalAmount: number;   
     sortBy: string;   
     sortOrder: 'asc' | 'desc'; 
@@ -57,15 +58,6 @@ export interface UpdateUserRights{
     roles:Roles[]
 }
 
-export interface ApiResponse<T> {
-  data: T;
-  meta?: {
-    totalAmount: number,
-    sortBy:	string,
-    sortOrder:	string,
-  };
-  status: number;
-}
 
 export interface ApiError {
   status: number;

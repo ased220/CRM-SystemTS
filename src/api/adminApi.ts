@@ -20,32 +20,40 @@ adminApi.interceptors.request.use(
     } 
 );
 
-let abortController: AbortController | null = null;
 
 export const usersRequest = async (filters: UserFilters = {}) => {
-    if (abortController) {
-        abortController.abort(); 
-    }
-
-    abortController = new AbortController();
 
     try {
         const response = await adminApi.get<MetaResponse<User>>('/admin/users', { 
             params: filters,
-            signal: abortController.signal 
         });
         return response.data;
-    }finally {
-        abortController = null;
+    }catch(error){
+        console.log(error);
+        
+        return error;
     }
 };
 
-export const profileUserRequest = async(id:number) =>{
+export const profileUserRequest = async(id:number): Promise<MetaResponse<User>>  =>{
     try {   
         const response = await adminApi.get<User>(`/admin/users/${id}`);
-        return response;
-    } catch (error) {
-        return error;
+        return  {
+        data: response.data,
+        status: response.status, 
+    };
+    } catch (error:any) {
+         if (error.response) {
+            return {
+                data: {} as User, 
+                status: error.response.status
+            };
+        } else {
+            return {
+                data: {} as User,
+                status: 500 
+            };
+        }
     }
 }
 
