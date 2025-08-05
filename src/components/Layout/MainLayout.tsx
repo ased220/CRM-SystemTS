@@ -9,7 +9,6 @@ type MenuItem = Required<MenuProps>["items"][number];
 
 export default function MainLayout(){
     const {roles} = useAppSelector( state => state.profile.user)
-    
     const dispatch = useAppDispatch();
     
     const [collapsed, setCollapsed] = useState(false);
@@ -46,10 +45,10 @@ export default function MainLayout(){
                         dispatch(resetStatusLogin())
                         navigate('/login')
                     }
-                    if (statusToken === 401){
+                    // if (statusToken === 401){
                         
-                        navigate('/login')
-                    }
+                    //     navigate('/login')
+                    // }
                 };
                 checkAuth();
                 

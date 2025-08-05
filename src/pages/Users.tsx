@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store/hooks"
-import { getUsersAction } from "../store/slices/adminSlice";
+import { getUsersAction, updateIsBlocked, updateOffsetPagination, updateSearch, updateSortBy, updateSortOrder } from "../store/slices/adminSlice";
 import '../styles/users.scss'
-import { Button, Flex, Input, Menu, message, Modal, Pagination, Table, Tag, Typography, type MenuProps } from "antd";
+import { Button, Checkbox, Flex, Input, Menu, Modal, Pagination, Space, Table, Tag, Typography, type MenuProps } from "antd";
 import { ArrowRightOutlined, DeleteOutlined, DownOutlined, SearchOutlined, UpOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 import { blockUserRequest, deleteUserProfileRequest, unblockUserRequest, updateUserRightRequest } from "../api/adminApi";
@@ -15,7 +15,7 @@ export default function Users(){
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const { users, statusUsers, totalAmount } = useAppSelector((state) => state.admin);
+    const { users, statusUsers, totalAmount, filterState } = useAppSelector((state) => state.admin);
     const [isModalOpen, setIsModalOpen] = useState <boolean>(false);
 
     type ChangeBlock = {
@@ -24,105 +24,91 @@ export default function Users(){
     }
     const [isBlock, setIsBlock] = useState<ChangeBlock>({id:-1, isBlock:false})
     const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
-
+    
     const [isAdmin, setIsAdmin] = useState( false)
     const [idIsAdmin, setIdIsAdmin] = useState(-1)
     const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
     
-    const [searchText, setSearchText] = useState<string>('')
     
     const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
     const [sortByUsername, setSortByUsername] = useState<boolean>(false);
     const [sortByEmail, setSortByEmail] = useState<boolean>(false);
     
-    const [paginationState, setPaginationState] = useState<number>(0);
+    const [changeRolesModalVisible, setChangeRolesModalVisible] = useState(false);
+    const [selectedUserForRoles, setSelectedUserForRoles] = useState<{id: number, roles: Roles[]} | null>(null);
 
     useEffect(() =>{
-        dispatch(getUsersAction({offset: paginationState}))
+        dispatch(getUsersAction())
     }
-    ,[paginationState, dispatch])
+    ,[dispatch])
     
     
     const handleSortByUsername = ()=>{
       if (!sortByUsername){
-        dispatch(getUsersAction(
-          {
-            sortBy: 'username',
-            sortOrder: 'asc',
-          }
-        ))
+        dispatch(updateSortBy('username'));
+        dispatch(updateSortOrder('asc'));
+        dispatch( getUsersAction())
         setSortByUsername(true);
       }else{
-        dispatch(getUsersAction(
-          {
-            sortBy: 'username',
-            sortOrder: 'desc' 
-          }
-        ))
+        dispatch(updateSortBy('username'));
+        dispatch(updateSortOrder('desc'));
+        dispatch( getUsersAction())
         setSortByUsername(false);
+
       }
     }
     const handleSortByEmail = ()=>{
       if (!sortByEmail){
-        dispatch(getUsersAction(
-          {
-            sortBy: 'email',
-            sortOrder: 'asc' 
-          }
-        ))
+        dispatch(updateSortBy('email'));
+        dispatch(updateSortOrder('asc'));        
+        dispatch( getUsersAction())
+
         setSortByEmail(true);
       }else{
-        dispatch(getUsersAction(
-          {
-            sortBy: 'email',
-            sortOrder: 'desc' 
-          }
-        ))
+        dispatch(updateSortBy('email'));
+        dispatch(updateSortOrder('desc'));
+        dispatch( getUsersAction())
         setSortByEmail(false);
       }
     }
 
     const handleSearch = () =>{
-      if (searchText){
-          dispatch(getUsersAction(
-            {
-              search: searchText,
-            }
-          ))
-      }
+        dispatch( getUsersAction())
     }
 
-    const showChangeRightsModal = (id:number, roles: Roles[])=>{
-
-      const role:boolean = roles.includes(Roles.ADMIN);      
-      setIsAdmin(role)
-      setIdIsAdmin(id)
-      setIsAdminModalOpen(true)
-    }
+    const showChangeRolesModal = (id: number, roles: Roles[]) => {
+        setSelectedUserForRoles({ id, roles });
+        setChangeRolesModalVisible(true);
+    };
+    const handleSaveRoles = async (userId: number, newRoles: Roles[]) => {
+        try {
+            await updateUserRightRequest({ id: userId, roles: newRoles });
+            dispatch(getUsersAction());
+            setChangeRolesModalVisible(false);
+        } catch (error) {
+            console.error('Error updating roles:', error);
+        }
+    };
     const showChangeBlockModal = (id:number,isBlocked:boolean)=>{
       setIsBlock({id:id, isBlock:isBlocked})
       setIsBlockModalOpen(true)
     }
-
     const handleIsAdmin = async()=>{
       try {
         if (isAdmin){
           await updateUserRightRequest({ id: idIsAdmin,  roles: [Roles.USER] })
-          dispatch(getUsersAction({offset: paginationState}))
-          message.success('Данные пользователя изменены');
+          dispatch(getUsersAction())
           setIdIsAdmin(-1)
           setIsAdmin( false )
           setIsAdminModalOpen(false)
         }else{
           await updateUserRightRequest({ id: idIsAdmin, roles: [Roles.ADMIN]})
-          dispatch(getUsersAction({offset: paginationState}))
-          message.success('Данные пользователя изменены');
+          dispatch(getUsersAction())
           setIdIsAdmin(-1)
           setIsAdmin( false )
           setIsAdminModalOpen(false)
         }
       } catch (error) {
-        message.error('Произошла ошибка при изменении данных пользователя');
         setIdIsAdmin(-1)
         setIsAdmin( false )
         setIsAdminModalOpen(false)  
@@ -134,19 +120,16 @@ export default function Users(){
       try {
         if (isBlock.isBlock){
           await unblockUserRequest(isBlock.id)
-          dispatch(getUsersAction({offset: paginationState}))
+          dispatch(getUsersAction())
           setIsBlock({id:-1, isBlock:false})
-          message.success('Пользователь успешно удален');
           setIsBlockModalOpen(false)
         }else{
           await blockUserRequest(isBlock.id);
-          dispatch(getUsersAction({offset: paginationState}))
+          dispatch(getUsersAction())
           setIsBlock({id:-1, isBlock:false})
-          message.success('Пользователь успешно удален');
           setIsBlockModalOpen(false)
         }
       } catch (error) {
-        message.error('Произошла ошибка при удалении пользователя');
         setIsBlockModalOpen(false)  
         console.log('не удалось',error);
         
@@ -161,11 +144,9 @@ export default function Users(){
       if (selectedUserId) {
         try {
           await deleteUserProfileRequest(selectedUserId);
-          dispatch(getUsersAction({offset: paginationState}));
-          message.success('Пользователь успешно удален');
+          dispatch(getUsersAction());
           setIsModalOpen(false);
         } catch (error) {
-          message.error('Произошла ошибка при удалении пользователя');
           console.error('Delete error:', error);
         }
       }
@@ -209,11 +190,14 @@ const items: MenuItem[] = [
 
 const onClick: MenuProps["onClick"] = (e) => {
     if (e.key === '1'){
-      dispatch(getUsersAction({}))
+      dispatch(updateIsBlocked('none'))
+      dispatch(getUsersAction())
     }else if (e.key === '2'){
-      dispatch(getUsersAction({isBlocked:true}))
+      dispatch(updateIsBlocked(true))
+      dispatch(getUsersAction())
     }else{
-      dispatch(getUsersAction({isBlocked:false}))
+      dispatch(updateIsBlocked(false))
+      dispatch(getUsersAction())
     }
   };
 
@@ -305,8 +289,8 @@ const onClick: MenuProps["onClick"] = (e) => {
           <Button onClick={() => showChangeBlockModal(user.id, user.isBlocked)}>
             {user.isBlocked ? 'Разблокировать' : 'Заблокировать'}
           </Button>
-          <Button onClick={() => showChangeRightsModal(user.id, user.roles)}>
-            {user.roles.includes(Roles.ADMIN) ? 'Забрать админку' : 'Дать админку'}
+          <Button onClick={() => showChangeRolesModal(user.id, user.roles)}>
+              Изменить роли
           </Button>
         </Flex>
       ),
@@ -323,9 +307,7 @@ const onClick: MenuProps["onClick"] = (e) => {
             className="inputSearchEmail"
             placeholder="Поиск по имени или email" 
             prefix={<SearchOutlined />} 
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            
+            onChange={(e) => dispatch(updateSearch(e.target.value))}
             />
           <Button 
             onClick={handleSearch}
@@ -354,12 +336,18 @@ const onClick: MenuProps["onClick"] = (e) => {
         />
         
         <Pagination 
-          defaultCurrent={1} 
+          defaultCurrent={filterState.offset} 
           total={Math.ceil(totalAmount / 2)} 
-          onChange={(e) => setPaginationState(e - 1)} 
+          onChange={(e) => {
+            dispatch(updateOffsetPagination(Math.ceil(e-1)))
+            dispatch(getUsersAction())
+          }
+          
+          } 
           style={{ margin:'20px auto 20px auto', textAlign: 'center', justifyContent:'center' }}
         />
       </div>
+      
           <Modal
               title="Подтверждение удаления"
               open={isModalOpen}
@@ -406,6 +394,54 @@ const onClick: MenuProps["onClick"] = (e) => {
               <p>Вы уверены, что хотите изменить данные этого пользователя? </p>
               <p>Это действие нельзя будет отменить </p>
           </Modal>
+          {selectedUserForRoles && (
+              <Modal
+                  title="Изменить роли пользователя"
+                  open={changeRolesModalVisible}
+                  onOk={() => handleSaveRoles(selectedUserForRoles.id, selectedUserForRoles.roles)}
+                  onCancel={() => setChangeRolesModalVisible(false)}
+                  okText="Сохранить"
+                  cancelText="Отмена"
+                  width={600}
+                  centered
+              >
+                  <Space direction="vertical" style={{ width: '100%' }}>
+                      <Checkbox
+                          checked={selectedUserForRoles.roles.includes(Roles.USER)}
+                          onChange={(e) => {
+                              const newRoles = e.target.checked
+                                  ? [...selectedUserForRoles.roles, Roles.USER]
+                                  : selectedUserForRoles.roles.filter(role => role !== Roles.USER);
+                              setSelectedUserForRoles({...selectedUserForRoles, roles: newRoles});
+                          }}
+                      >
+                          USER
+                      </Checkbox>
+                      <Checkbox
+                          checked={selectedUserForRoles.roles.includes(Roles.MODERATOR)}
+                          onChange={(e) => {
+                              const newRoles = e.target.checked
+                                  ? [...selectedUserForRoles.roles, Roles.MODERATOR]
+                                  : selectedUserForRoles.roles.filter(role => role !== Roles.MODERATOR);
+                              setSelectedUserForRoles({...selectedUserForRoles, roles: newRoles});
+                          }}
+                      >
+                          MODERATOR
+                      </Checkbox>
+                      <Checkbox
+                          checked={selectedUserForRoles.roles.includes(Roles.ADMIN)}
+                          onChange={(e) => {
+                              const newRoles = e.target.checked
+                                  ? [...selectedUserForRoles.roles, Roles.ADMIN]
+                                  : selectedUserForRoles.roles.filter(role => role !== Roles.ADMIN);
+                              setSelectedUserForRoles({...selectedUserForRoles, roles: newRoles});
+                          }}
+                      >
+                          ADMIN
+                      </Checkbox>
+                  </Space>
+              </Modal>
+            )}
     </div>
   );
 };

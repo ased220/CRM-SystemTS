@@ -1,12 +1,14 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { ApiError, MetaResponse, UpdateProfileParams, User, UserFilters } from "../../types/adminInterface";
 import { profileUserRequest, updateUserProfileRequest, usersRequest } from "../../api/adminApi";
+import type { RootState } from "../store";
 
 interface InitialState {
     users:User[],
     statusUsers:number,
     userProfile:User,
     totalAmount:number,
+    filterState: UserFilters,
 } 
 
 const initialState: InitialState = {
@@ -32,18 +34,44 @@ const initialState: InitialState = {
         roles:[],
         username:'',
     },
-    totalAmount:0
+    totalAmount:0,
+
+    filterState:{
+    search:'',
+    sortBy: 'id',
+    sortOrder: 'asc',
+    isBlocked: 'none',
+    limit: 20,
+    offset:0,
+    }
 };  
 
 
 export const getUsersAction = createAsyncThunk<
   MetaResponse<User[]>, 
-  UserFilters,         
-  { rejectValue: ApiError } 
+  void, 
+  {
+    rejectValue: ApiError;
+    state: RootState;
+  }
 >(
     'admin/users',
-    async (filters: UserFilters , {rejectWithValue }) =>{
+    async (_ , {rejectWithValue, getState }) =>{
         try {
+            const state = getState();
+            const filters = state.admin.filterState
+            if(filters.isBlocked === 'none'){
+                const response = await usersRequest(
+                    {
+                    search:filters.search,
+                    sortBy: filters.sortBy,
+                    sortOrder: filters.sortOrder,
+                    limit: filters.limit,
+                    offset: filters.offset,
+                    }
+                );
+                return response as MetaResponse<User[]>;            
+            }
             const response = await usersRequest(filters);
             return response as MetaResponse<User[]>;} 
         catch (error:any) {
@@ -111,7 +139,21 @@ const adminSlice = createSlice({
     name:'admin',
     initialState,
     reducers:{
-
+        updateSearch:(state, action)=>{
+            state.filterState.search = action.payload
+        },
+        updateIsBlocked:(state, action)=>{
+            state.filterState.isBlocked = action.payload
+        },
+        updateSortBy:(state, action)=>{
+            state.filterState.sortBy = action.payload
+        },
+        updateSortOrder:(state, action)=>{
+            state.filterState.sortOrder = action.payload
+        },
+        updateOffsetPagination:(state, action)=>{
+            state.filterState.offset = action.payload 
+        },
     },
     extraReducers:(builder)=>{
         builder
@@ -150,5 +192,13 @@ const adminSlice = createSlice({
     }
 }
 )
+
+export const { 
+    updateSearch,
+    updateIsBlocked,
+    updateSortBy,
+    updateSortOrder,
+    updateOffsetPagination,
+} = adminSlice.actions
 
 export default adminSlice.reducer;
