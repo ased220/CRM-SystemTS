@@ -38,6 +38,7 @@ export default function Users(){
     const [selectedUserForRoles, setSelectedUserForRoles] = useState<{id: number, roles: Roles[]} | null>(null);
 
     useEffect(() =>{
+        dispatch(updateSearch(''))
         dispatch(getUsersAction())
     }
     ,[dispatch])
