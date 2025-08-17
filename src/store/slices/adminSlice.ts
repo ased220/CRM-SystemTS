@@ -72,20 +72,23 @@ export const getUsersAction = createAsyncThunk<
                 );
                 return response as MetaResponse<User[]>;            
             }
-            const response = await usersRequest(filters);
-            return response as MetaResponse<User[]>;} 
-        catch (error:any) {
+            return await usersRequest(filters) as MetaResponse<User[]>
+        }
+        catch (error: unknown) {
             let message = 'Unknown error';
             let status = 500;
             
-            if (error.response) {
-                status = error.response.status || 500;
-                if (typeof error.response.data === 'string') {
-                    message = error.response.data;
-                } else if (error.response.data?.message) {
-                    message = error.response.data.message;
-                }
-            } 
+            if (typeof error === 'object' && error !== null) {
+                if ('response' in error) {
+                    const axiosError = error as { response?: { status?: number, message?: string } };
+                    status = axiosError.response?.status || 500;
+                    
+                    if (typeof axiosError.response?.message === 'string') {
+                        message = axiosError.response.message;
+                    }
+                } 
+                
+            }
             
             return rejectWithValue({ status, message });
         }
@@ -100,11 +103,22 @@ export const getUserProfileAction = createAsyncThunk<
   async (id: number, { rejectWithValue }) => {
     try {
       return await profileUserRequest(id);
-    } catch (error: any) {
-      return rejectWithValue({
-        status: error.response?.status || 500,
-        message: error.response?.data?.message || 'Unknown error'
-      });
+    }  catch (error: unknown) {
+      let message = 'Unknown error';
+      let status = 500;
+
+      if (typeof error === 'object' && error !== null) {
+        if ('response' in error) {
+          const axiosError = error as { response?: { status?: number, message?: string } };
+          status = axiosError.response?.status || 500;
+          message = axiosError.response?.message || 'Unknown error';
+        } 
+        else if ('message' in error && typeof error.message === 'string') {
+          message = error.message;
+        }
+      }
+
+      return rejectWithValue({ status, message });
     }
   }
 );
@@ -113,24 +127,24 @@ export const updateUserProfileAction = createAsyncThunk(
     async(updateProfileParams:UpdateProfileParams, { rejectWithValue })=>{
         try {
             return await updateUserProfileRequest(updateProfileParams) as MetaResponse<User>;
-        } catch (error:any) {
+        } catch (error: unknown) {
             let message = 'Unknown error';
             let status = 500;
             
-            if (error.response) {
-                status = error.response.status || 500;
-                if (typeof error.response.data === 'string') {
-                    message = error.response.data;
-                } else if (error.response.data?.message) {
-                    message = error.response.data.message;
-                }
-            } else if (error.request) {
-                message = 'No response from server';
-            } else {
-                message = error.message || 'Unknown error';
+            if (typeof error === 'object' && error !== null) {
+                if ('response' in error) {
+                    const axiosError = error as { response?: { status?: number, message?: string } };
+                    status = axiosError.response?.status || 500;
+                    
+                    if (typeof axiosError.response?.message === 'string') {
+                        message = axiosError.response.message;
+                    } 
+                } 
+                
             }
             
-            return rejectWithValue({ status, message });        }
+            return rejectWithValue({ status, message });
+        }
 
     }
 )

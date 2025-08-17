@@ -11,7 +11,7 @@ export default function MainLayout(){
     const {roles} = useAppSelector( state => state.profile.user)
     const dispatch = useAppDispatch();
     
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState<boolean>(false);
     const toggleCollapsed = () => { setCollapsed(!collapsed); };
     const navigate = useNavigate()
     
@@ -22,7 +22,7 @@ export default function MainLayout(){
     ];
     const adminItem: MenuItem = { key: "4", icon: <TeamOutlined />, label: "Пользователи" };
     
-    const items = roles.includes( "ADMIN" ) ? [...baseitems, adminItem]: baseitems;
+    const items = roles.includes( "ADMIN" ) ? [...baseitems, adminItem] : baseitems;
     
     const handleMenu = (e: {key:string}) => {
         if( e.key == '1') navigate('/');
