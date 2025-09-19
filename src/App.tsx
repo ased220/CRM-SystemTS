@@ -7,12 +7,12 @@ import SignUp from "./components/Sign/SignUp";
 import SignIn from "./components/Sign/SignIn";
 import AuthLayout from "./components/Layout/authLayout/AuthLayout";
 
-import Users from "./pages/Users";
+import Users from "./pages/users/Users";
 import { useAppDispatch, useAppSelector } from "./store/hooks";
 import type { RootState } from "./store/store";
 import { useEffect } from "react";
 import { getProfile } from "./store/slices/profileSlice";
-import AdminUserProfile from "./pages/AdminUserProfile";
+import UserPage from "./pages/AdminUserProfile";
 
 function App() {
 
@@ -32,7 +32,7 @@ function App() {
                     <Route index element={<TodosPage pathname = "/" />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/users" element={<Users />} />
-                    <Route path="/AdminUserProfile/:id" element={<AdminUserProfile/>}/>
+                    <Route path="/AdminUserProfile/:id" element={<UserPage/>}/>
                 </Route>
                     <Route element = {<AuthLayout />}>
                         <Route path="/registration" element={ <SignUp /> } />

@@ -1,9 +1,9 @@
 // Интерфейс запроса для фильтрации и сортировки пользователей
 export interface UserFilters { 
   search?: string;
-  sortBy?: string;
+  sortBy?: 'email' | 'username' | 'id'
   sortOrder?: 'asc' | 'desc';
-  isBlocked?: boolean | 'none';
+  isBlocked?: boolean| 'none';
   limit?: number;  // сколько на странице
   offset?: number;  // страницу
 }
@@ -14,7 +14,7 @@ export interface User {
   username: string;
   email: string;
   date: string; // ISO date string 
-  isBlocked: boolean;
+  isBlocked: boolean ;
   roles: Roles[]; 
   phoneNumber: string;
 }

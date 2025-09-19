@@ -1,30 +1,31 @@
-import axios from "axios";
-import { baseURL } from "../constants/path";
-import { authService } from "../constants/authService";
-import type { MetaResponse, UpdateProfileParams, UpdateUserRights, User, UserFilters } from "../types/adminInterface";
+// import axios from "axios";
+// import { baseURL } from "../constants/path";
+// import { authService } from "../constants/authService";
+import type { MetaResponse, UpdateProfileParams, UpdateUserRights, User, UserFilters } from "../types/userInterface";
+import { profileApi } from "./authApi";
 
-const adminApi = axios.create({
-    baseURL: baseURL
-})
+// const adminApi = axios.create({
+//     baseURL: baseURL
+// })
 
-adminApi.interceptors.request.use(
-    config => {
-        const accessToken = authService.getAccessToken();    
-        if (accessToken) {
-            config.headers.Authorization = `Bearer ${accessToken}`;
-        }
-        return config;
-    },
-    function (error) {
-        return Promise.reject(error);
-    } 
-);
+// adminApi.interceptors.request.use(
+//     config => {
+//         const accessToken = authService.getAccessToken();    
+//         if (accessToken) {
+//             config.headers.Authorization = `Bearer ${accessToken}`;
+//         }
+//         return config;
+//     },
+//     function (error) {
+//         return Promise.reject(error);
+//     } 
+// );
 
 
-export const usersRequest = async (filters: UserFilters = {}) => {
+export const GetUsers = async (filters: UserFilters = {}) => {
 
     try {
-        const response = await adminApi.get<MetaResponse<User>>('/admin/users', { 
+        const response = await profileApi.get<MetaResponse<User>>('/admin/users', { 
             params: filters,
         });
         return response.data;
@@ -35,67 +36,62 @@ export const usersRequest = async (filters: UserFilters = {}) => {
     }
 };
 
-export const profileUserRequest = async(id:number): Promise<MetaResponse<User>>  =>{
+export const GetProfileUser = async(id:number): Promise<MetaResponse<User>>  =>{
     try {   
-        const response = await adminApi.get<User>(`/admin/users/${id}`);
+        const response = await profileApi.get<User>(`/admin/users/${id}`);
         return  {
-        data: response.data,
-        status: response.status, 
+            data: response.data,
+            status: response.status, 
     };
-    } catch (error:any) {
-         if (error.response) {
-            return {
-                data: {} as User, 
-                status: error.response.status
-            };
-        } else {
-            return {
-                data: {} as User,
-                status: 500 
-            };
-        }
-    }
-}
-
-export const updateUserProfileRequest = async(userProfileRequest:UpdateProfileParams)=>{
-    try{
-        const response = await adminApi.put<User>(`/admin/users/${userProfileRequest.id}`, userProfileRequest.userRequest)
-        return response;
-    }catch(error){
-        return error
-    }
-}
-
-export const deleteUserProfileRequest = async(id:number) =>{
-    try {
-        await adminApi.delete(`/admin/users/${id}`)
     } catch (error) {
-        
-        return error
+        console.error('Не удалось получить данные пользователей', error);
+        throw error
     }
 }
 
-export const blockUserRequest = async(id:number) =>{
-    try {
-        await adminApi.post(`/admin/users/${id}/block`)
-    } catch (error) {      
-        return error
-    }
-}
-export const unblockUserRequest = async(id:number) =>{
-    try {
-        await adminApi.post(`/admin/users/${id}/unblock`)
-    } catch (error) {      
-        return error
-    }
-}
-
-export const updateUserRightRequest = async(updateUserRights:UpdateUserRights)=>{
+export const updateUserProfile = async(userProfileRequest:UpdateProfileParams)=>{
     try{
-        
-        const response = await adminApi.post<User>(`/admin/users/${updateUserRights.id}/rights`, { roles: updateUserRights.roles})
+        const response = await profileApi.put<User>(`/admin/users/${userProfileRequest.id}`, userProfileRequest.userRequest)
         return response;
     }catch(error){
-        return error
+        console.error('Не удалось получить данные пользователя', error);
+        throw error
+    }
+}
+
+export const deleteUserProfile = async(id:number) =>{
+    try {
+        await profileApi.delete(`/admin/users/${id}`)
+    } catch (error) {
+        console.error('Не удалось удалить пользователя');
+        throw error
+    }
+}
+
+export const blockUser = async(id:number) =>{
+    try {
+        await profileApi.post(`/admin/users/${id}/block`)
+    } catch (error) {   
+        console.error('не удалось заблокировать');           
+        throw error;
+    }
+}
+export const unblockUser = async(id:number) =>{
+    try {
+        await profileApi.post(`/admin/users/${id}/unblock`)
+    } catch (error) {   
+        console.error('не удалось разблокировать')   
+        throw error
+    }
+}
+
+export const updateUserRight = async(updateUserRights:UpdateUserRights)=>{
+    try{
+        
+        const response = await profileApi.post<User>(`/admin/users/${updateUserRights.id}/rights`, { roles: updateUserRights.roles})
+        return response;
+    }catch(error){
+        console.error('не удалось обновить права')
+        throw error
     }
 }

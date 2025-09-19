@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../store/hooks"
-import { getUsersAction, updateIsBlocked, updateOffsetPagination, updateSearch, updateSortBy, updateSortOrder } from "../store/slices/adminSlice";
-import '../styles/users.scss'
+import { useAppDispatch, useAppSelector } from "@/store/hooks"
+import { getUsersAction, updateIsBlocked, updateOffsetPagination, updateSearch, updateSortBy, updateSortOrder } from "@/store/slices/adminUsersSlice";
+import styles from '@/pages/users/users.module.scss'; 
 import { Button, Checkbox, Flex, Input, Menu, Modal, Pagination, Space, Table, Tag, Typography, type MenuProps } from "antd";
 import { ArrowRightOutlined, DeleteOutlined, DownOutlined, SearchOutlined, UpOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
-import { blockUserRequest, deleteUserProfileRequest, unblockUserRequest, updateUserRightRequest } from "../api/adminApi";
-import { Roles, type User } from "../types/adminInterface";
+import { Roles, type User } from "@/types/userInterface";
+import { blockUser, deleteUserProfile, unblockUser, updateUserRight } from "@/api/adminApi";
 
 
 const {Text} = Typography;
@@ -15,7 +15,7 @@ export default function Users(){
 
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const { users, statusUsers, totalAmount, filterState } = useAppSelector((state) => state.admin);
+    const { users, statusGetUsers, totalAmount, filterState } = useAppSelector((state) => state.adminUsers);
     const [isModalOpen, setIsModalOpen] = useState <boolean>(false);
 
     type ChangeBlock = {
@@ -83,7 +83,7 @@ export default function Users(){
     };
     const handleSaveRoles = async (userId: number, newRoles: Roles[]) => {
         try {
-            await updateUserRightRequest({ id: userId, roles: newRoles });
+            await updateUserRight({ id: userId, roles: newRoles });
             dispatch(getUsersAction());
             setChangeRolesModalVisible(false);
         } catch (error) {
@@ -97,13 +97,13 @@ export default function Users(){
     const handleIsAdmin = async()=>{
       try {
         if (isAdmin){
-          await updateUserRightRequest({ id: idIsAdmin,  roles: [Roles.USER] })
+          await updateUserRight({ id: idIsAdmin,  roles: [Roles.USER] })
           dispatch(getUsersAction())
           setIdIsAdmin(-1)
           setIsAdmin( false )
           setIsAdminModalOpen(false)
         }else{
-          await updateUserRightRequest({ id: idIsAdmin, roles: [Roles.ADMIN]})
+          await updateUserRight({ id: idIsAdmin, roles: [Roles.ADMIN]})
           dispatch(getUsersAction())
           setIdIsAdmin(-1)
           setIsAdmin( false )
@@ -120,12 +120,12 @@ export default function Users(){
     const handleIsBlock = async()=>{
       try {
         if (isBlock.isBlock){
-          await unblockUserRequest(isBlock.id)
+          await unblockUser(isBlock.id)
           dispatch(getUsersAction())
           setIsBlock({id:-1, isBlock:false})
           setIsBlockModalOpen(false)
         }else{
-          await blockUserRequest(isBlock.id);
+          await blockUser(isBlock.id);
           dispatch(getUsersAction())
           setIsBlock({id:-1, isBlock:false})
           setIsBlockModalOpen(false)
@@ -144,7 +144,7 @@ export default function Users(){
     const handleOk = async () => {
       if (selectedUserId) {
         try {
-          await deleteUserProfileRequest(selectedUserId);
+          await deleteUserProfile(selectedUserId);
           dispatch(getUsersAction());
           setIsModalOpen(false);
         } catch (error) {
@@ -216,7 +216,7 @@ const onClick: MenuProps["onClick"] = (e) => {
       ),
       dataIndex: 'username',
       key: 'username',
-      render: (text: string) => <div className="username">{text}</div>,
+      render: (text: string) => <div className={styles.username}>{text}</div>,
     },
     {
       title: (
@@ -231,13 +231,13 @@ const onClick: MenuProps["onClick"] = (e) => {
       ),
       dataIndex: 'email',
       key: 'email',
-      render: (text: string) => <div className="email">{text}</div>,
+      render: (text: string) => <div className={styles.email}>{text}</div>,
     },
     {
       title: 'Дата регистрации',
       dataIndex: 'date',
       key: 'date',
-      render: (text: string) => <div className="registration-date">{formatDate(text)}</div>,
+      render: (text: string) => <div className={styles.registrationDate}>{formatDate(text)}</div>,
     },
     {
       title: 'Статус',
@@ -252,7 +252,7 @@ const onClick: MenuProps["onClick"] = (e) => {
       title: 'Роли',
       key: 'roles',
       render: (user: User) => (
-        <div className="roles-container">
+        <div className={styles.rolesContainer}>
           {user.roles.map((role: string) => {
             let color = '';
             switch (role) {
@@ -274,7 +274,7 @@ const onClick: MenuProps["onClick"] = (e) => {
       title: 'Телефон',
       dataIndex: 'phoneNumber',
       key: 'phoneNumber',
-      render: (text: string) => <div className="phone-number">{text || 'Не указан'}</div>,
+      render: (text: string) => <div className={styles.phoneNumber}>{text || 'Не указан'}</div>,
     },
     {
       title: 'Действия',
@@ -299,41 +299,42 @@ const onClick: MenuProps["onClick"] = (e) => {
   ];
 
   return (
-     <div className="users-table-container">
-      <Title level={1}  className="table-title">Пользователи</Title>
-      <Flex className="titleContainer">
+     <div className={styles.usersTableContainer}>
+      <Title level={1} className={styles.tableTitle}>Пользователи</Title>
+      <Flex className={styles.titleContainer}>
         <Title level={3}>Пользователи</Title>
-        <Flex style={{gap:'10px'}}>
+        <Flex className={styles.searchContainer}>
           <Input 
-            className="inputSearchEmail"
+            className={styles.inputSearchEmail}
             placeholder="Поиск по имени или email" 
             prefix={<SearchOutlined />} 
             onChange={(e) => dispatch(updateSearch(e.target.value))}
             />
           <Button 
             onClick={handleSearch}
-            style={{height:'50px'}}  
+            className={styles.searchButton}
           >
               Поиск
           </Button>
           <Menu 
             onClick={onClick} 
-            style={{ width: 100 }} 
+            className={styles.filterMenu}
             mode="vertical" 
             items={items} 
             />
         </Flex>
       </Flex>
 
-      {statusUsers === -1 && <p className="loading-message">Загрузка данных...</p>}
-      {statusUsers === 500 && <p className="error-message">Ошибка загрузки данных</p>}
+      {statusGetUsers === -1 && <p className={styles.loadingMessage}>Загрузка данных...</p>}
+      {statusGetUsers === 500 && <p className={styles.errorMessage}>Ошибка загрузки данных</p>}
 
-      <div className="table-wrapper">
+      <div className={styles.tableWrapper}>
         <Table
           columns={columns}
           dataSource={users.map(user => ({ ...user, key: user.id }))}
           pagination={false}
           scroll={{ x: 'max-content' }}
+          className={styles.usersTable}
         />
         
         <Pagination 
@@ -342,107 +343,108 @@ const onClick: MenuProps["onClick"] = (e) => {
           onChange={(e) => {
             dispatch(updateOffsetPagination(Math.ceil(e-1)))
             dispatch(getUsersAction())
-          }
-          
-          } 
-          style={{ margin:'20px auto 20px auto', textAlign: 'center', justifyContent:'center' }}
+          }}
+          className={styles.pagination}
         />
       </div>
       
-          <Modal
-              title="Подтверждение удаления"
-              open={isModalOpen}
-              onOk={handleOk}
-              onCancel={handleCancel}
-              okText="Удалить"
-              cancelText="Отмена"
-              okButtonProps={{ danger: true }}
-              closable={true}
-              maskClosable={false}
-              width={600}
-              centered
-          >
-              <p>Вы уверены, что хотите удалить этого пользователя? </p>
-              <p>Это действие нельзя будет отменить </p>
-          </Modal>
-          <Modal
-              title="Подтверждение изменения данных"
-              open={isBlockModalOpen}
-              onOk={handleIsBlock}
-              onCancel={handleCancel}
-              okText="Изменить"
-              cancelText="Отмена"
-              closable={true}
-              maskClosable={false}
-              width={600}
-              centered
-          >
-              <p>Вы уверены, что хотите изменить данные этого пользователя? </p>
-              <p>Это действие нельзя будет отменить </p>
-          </Modal>
-          <Modal
-              title="Подтверждение изменения данных"
-              open={isAdminModalOpen}
-              onOk={handleIsAdmin}
-              onCancel={handleCancel}
-              okText="Изменить"
-              cancelText="Отмена"
-              closable={true}
-              maskClosable={false}
-              width={600}
-              centered
-          >
-              <p>Вы уверены, что хотите изменить данные этого пользователя? </p>
-              <p>Это действие нельзя будет отменить </p>
-          </Modal>
-          {selectedUserForRoles && (
-              <Modal
-                  title="Изменить роли пользователя"
-                  open={changeRolesModalVisible}
-                  onOk={() => handleSaveRoles(selectedUserForRoles.id, selectedUserForRoles.roles)}
-                  onCancel={() => setChangeRolesModalVisible(false)}
-                  okText="Сохранить"
-                  cancelText="Отмена"
-                  width={600}
-                  centered
-              >
-                  <Space direction="vertical" style={{ width: '100%' }}>
-                      <Checkbox
-                          checked={selectedUserForRoles.roles.includes(Roles.USER)}
-                          onChange={(e) => {
-                              const newRoles = e.target.checked
-                                  ? [...selectedUserForRoles.roles, Roles.USER]
-                                  : selectedUserForRoles.roles.filter(role => role !== Roles.USER);
-                              setSelectedUserForRoles({...selectedUserForRoles, roles: newRoles});
-                          }}
-                      >
-                          USER
-                      </Checkbox>
-                      <Checkbox
-                          checked={selectedUserForRoles.roles.includes(Roles.MODERATOR)}
-                          onChange={(e) => {
-                              const newRoles = e.target.checked
-                                  ? [...selectedUserForRoles.roles, Roles.MODERATOR]
-                                  : selectedUserForRoles.roles.filter(role => role !== Roles.MODERATOR);
-                              setSelectedUserForRoles({...selectedUserForRoles, roles: newRoles});
-                          }}
-                      >
-                          MODERATOR
-                      </Checkbox>
-                      <Checkbox
-                          checked={selectedUserForRoles.roles.includes(Roles.ADMIN)}
-                          onChange={(e) => {
-                              const newRoles = e.target.checked
-                                  ? [...selectedUserForRoles.roles, Roles.ADMIN]
-                                  : selectedUserForRoles.roles.filter(role => role !== Roles.ADMIN);
-                              setSelectedUserForRoles({...selectedUserForRoles, roles: newRoles});
-                          }}
-                      >
-                          ADMIN
-                      </Checkbox>
-                  </Space>
-              </Modal>
-            )}
+      <Modal
+        title="Подтверждение удаления"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        okText="Удалить"
+        cancelText="Отмена"
+        okButtonProps={{ danger: true }}
+        closable={true}
+        maskClosable={false}
+        width={600}
+        centered
+      >
+        <p>Вы уверены, что хотите удалить этого пользователя? </p>
+        <p>Это действие нельзя будет отменить </p>
+      </Modal>
+      
+      <Modal
+        title="Подтверждение изменения данных"
+        open={isBlockModalOpen}
+        onOk={handleIsBlock}
+        onCancel={handleCancel}
+        okText="Изменить"
+        cancelText="Отмена"
+        closable={true}
+        maskClosable={false}
+        width={600}
+        centered
+      >
+        <p>Вы уверены, что хотите изменить данные этого пользователя? </p>
+        <p>Это действие нельзя будет отменить </p>
+      </Modal>
+      
+      <Modal
+        title="Подтверждение изменения данных"
+        open={isAdminModalOpen}
+        onOk={handleIsAdmin}
+        onCancel={handleCancel}
+        okText="Изменить"
+        cancelText="Отмена"
+        closable={true}
+        maskClosable={false}
+        width={600}
+        centered
+      >
+        <p>Вы уверены, что хотите изменить данные этого пользователя? </p>
+        <p>Это действие нельзя будет отменить </p>
+      </Modal>
+      
+      {selectedUserForRoles && (
+        <Modal
+          title="Изменить роли пользователя"
+          open={changeRolesModalVisible}
+          onOk={() => handleSaveRoles(selectedUserForRoles.id, selectedUserForRoles.roles)}
+          onCancel={() => setChangeRolesModalVisible(false)}
+          okText="Сохранить"
+          cancelText="Отмена"
+          width={600}
+          centered
+        >
+          <Space direction="vertical" style={{ width: '100%' }}>
+            <Checkbox
+              checked={selectedUserForRoles.roles.includes(Roles.USER)}
+              onChange={(e) => {
+                const newRoles = e.target.checked
+                  ? [...selectedUserForRoles.roles, Roles.USER]
+                  : selectedUserForRoles.roles.filter(role => role !== Roles.USER);
+                setSelectedUserForRoles({...selectedUserForRoles, roles: newRoles});
+              }}
+            >
+              USER
+            </Checkbox>
+            <Checkbox
+              checked={selectedUserForRoles.roles.includes(Roles.MODERATOR)}
+              onChange={(e) => {
+                const newRoles = e.target.checked
+                  ? [...selectedUserForRoles.roles, Roles.MODERATOR]
+                  : selectedUserForRoles.roles.filter(role => role !== Roles.MODERATOR);
+                setSelectedUserForRoles({...selectedUserForRoles, roles: newRoles});
+              }}
+            >
+              MODERATOR
+            </Checkbox>
+            <Checkbox
+              checked={selectedUserForRoles.roles.includes(Roles.ADMIN)}
+              onChange={(e) => {
+                const newRoles = e.target.checked
+                  ? [...selectedUserForRoles.roles, Roles.ADMIN]
+                  : selectedUserForRoles.roles.filter(role => role !== Roles.ADMIN);
+                setSelectedUserForRoles({...selectedUserForRoles, roles: newRoles});
+              }}
+            >
+              ADMIN
+            </Checkbox>
+          </Space>
+        </Modal>
+      )}
     </div>
   );
 };

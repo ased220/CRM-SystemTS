@@ -2,14 +2,16 @@ import { configureStore } from "@reduxjs/toolkit";
 import  register from './slices/registrationSlice'
 import login from './slices/loginSlice'
 import profile from './slices/profileSlice'
-import admin from './slices/adminSlice'
+import adminUsers from './slices/adminUsersSlice'
+import adminUserProfile from './slices/adminUserProfileSlice'
 
 export const store = configureStore({
     reducer: {
         register,
         login,
         profile,
-        admin,
+        adminUsers,
+        adminUserProfile
     }
 })
 

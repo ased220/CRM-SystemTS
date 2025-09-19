@@ -8,7 +8,7 @@ const baseApi = axios.create({
   baseURL: baseURL,
 })
 
-const profileApi = axios.create({
+export const profileApi = axios.create({
   baseURL: baseURL,
 })
 

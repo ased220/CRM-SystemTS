@@ -1,161 +1,149 @@
-import { Button, Form, Input, Typography } from "antd"
+import { Button, Form, Input, Space, Typography } from "antd"
 import { useNavigate, useParams } from "react-router"
 import { useAppDispatch, useAppSelector } from "../store/hooks"
 import { useEffect, useState } from "react"
-import { getUserProfileAction, updateUserProfileAction } from "../store/slices/adminSlice"
+import { getUserProfileAction, updateUserProfileAction } from "../store/slices/adminUserProfileSlice"
 import { EMAIL_RULES, PHONE_RULES, USERNAME_RULES } from "../constants/validation"
+import type { UserRequest } from "../types/userInterface"
 
-const { Text } = Typography
+const {Text} = Typography 
 
-export default function AdminUserProfile(){
+export default function UserPage() {
+  const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+  const { userProfile } = useAppSelector((state) => state.adminUserProfile)
+  const [isEditing, setIsEditing] = useState<boolean>(false)
+  const [form] = Form.useForm()
+  const [initialValues, setInitialValues] = useState<UserRequest>({
+    username: "",
+    email: "",
+    phoneNumber: ""
+  })
 
-    const { id } = useParams<{ id: string }>();
-    const navigate = useNavigate()
+  useEffect(() => {
+    if (id) dispatch(getUserProfileAction(+id))
+  }, [dispatch, id])
 
-    const dispatch = useAppDispatch()
-    const { userProfile } = useAppSelector((state) => state.admin);
-
-    const [editUsername, setEditUsername] = useState<boolean>(false);
-    const [editEmail, setEditEmail] = useState<boolean>(false);
-    const [editPhoneNumber, setEditPhoneNumber] = useState<boolean>(false);
-
-    const [form] = Form.useForm();
-
-    useEffect(()=>{
-        if (id){
-            dispatch(getUserProfileAction(+id))
-        }
-    },[dispatch, id]);
+  useEffect(() => {
+    const values = {
+      username: userProfile?.username || "",
+      email: userProfile?.email || "",
+      phoneNumber: userProfile?.phoneNumber || ""
+    }
     
-    const handleChangeUsername = async () => {
-        try {
-            await form.validateFields(['username']);
-            const values = form.getFieldsValue();
-            
-            if (id) {
-                await dispatch(updateUserProfileAction({
-                    id: +id,
-                    userRequest: { username: values.username }
-                }
-            ))
-        }
-        setEditUsername(false);
-        }catch (error) {
-            console.log(error);
-            
-        }
-    }
-    const handleChangeEmail = async () => {
-        try {
-            await form.validateFields(['email']);
-            const values = form.getFieldsValue();
-            
-            if (id) {
-                await dispatch(updateUserProfileAction({
-                    id: +id,
-                    userRequest: { email: values.email }
-                }));
-                setEditEmail(false);
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    }
-    const handleChangePhoneNumber = async () => {
-        try {
-            await form.validateFields(['phoneNumber']);
-            const values = form.getFieldsValue();
-            
-            if (id) {
-                await dispatch(updateUserProfileAction({
-                    id: +id,
-                    userRequest: { phoneNumber: values.phoneNumber }
-                }));
-                setEditPhoneNumber(false);
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    }
-    return (
-        <>
-            <Button onClick={()=>{navigate('/users')}}> Вернуться </Button>
-            <Form form={form} >
-                <Text> Имя пользователя: </Text>
-                <div>
-                {editUsername?(
-                    <>
-                        <Form.Item
-                        name="username"
-                        rules={ USERNAME_RULES }
-                        validateTrigger="onBlur"
-                        initialValue = {userProfile.username} 
-                        >
-                            <Input/>
-                        </Form.Item>
-                        <Button onClick={() =>{handleChangeUsername()}}> Сохранить </Button>
-                        <Button onClick={() =>{setEditUsername(false)}}> Отмена </Button>
-                        
-                    </>
-                ):
-                <>
-                        <Text>{userProfile.username}</Text>
-                        <Button onClick={() =>{setEditUsername(true)}}> Изменить </Button>
-                    </>
-                }
-                </div>
-                <Text> Email: </Text>
-                <div>
-                {editEmail?(
-                    <>
-                        <Form.Item
-                        name="email"
-                        rules={ EMAIL_RULES }
-                        validateTrigger="onBlur"
-                        initialValue = {userProfile.email} 
-                        >
-                            <Input/>
-                        </Form.Item>
-                        <Button onClick={() =>{handleChangeEmail()}}> Сохранить </Button>
-                        <Button onClick={() =>{setEditEmail(false)}}> Отмена </Button> 
-                    </>
-                ):
-                <>
-                        <Text>{userProfile.email}</Text>
-                        <Button onClick={() =>{setEditEmail(true)}}> Изменить </Button>
-                    </>
-                }
-                </div>
-                    <Text> Номер телефона</Text>
-                <div>
-                {editPhoneNumber?(
-                    <>
-                        <Form.Item
-                        name="phoneNumber"
-                        rules={ PHONE_RULES }
-                        validateTrigger="onBlur"
-                        initialValue = {userProfile.phoneNumber} 
-                        >
-                            <Input/>
-                        </Form.Item>
-                        <Button onClick={() =>{handleChangePhoneNumber()}}> Сохранить </Button>
-                        <Button onClick={() =>{setEditPhoneNumber(false)}}> Отмена </Button>
-                        
-                    </>
-                ):
-                    <>
-                        { userProfile.phoneNumber? (
+    form.setFieldsValue(values)
+    setInitialValues(values)
+  }, [userProfile, form])
 
-                            <Text>{userProfile.phoneNumber}</Text>
-                        ):(
-                            <Text>Отсутствует</Text>
-                        )}
-                            <Button onClick={() =>{setEditPhoneNumber(true)}}> Изменить </Button>
-                    </>
-                }
-                </div>
-                
-            </Form>
-        </>
-    )
+  const handleSubmit = async (values: UserRequest) => {
+    try {
+      if (id) {
+        const changedFields: Partial<UserRequest> = {}
+        
+        Object.keys(values).forEach(key => {
+          const field = key as keyof UserRequest
+          if (values[field] !== initialValues[field]) {
+            changedFields[field] = values[field]
+          }
+        })
+
+        if (Object.keys(changedFields).length > 0) {
+          await dispatch(updateUserProfileAction({
+            id: +id,
+            userRequest: changedFields
+          }))
+        }
+        
+        setInitialValues(values)
+      }
+    } catch (error) {
+      console.error( error )
+    }
+  }
+
+  const handleCancel = () => {
+    form.setFieldsValue(initialValues)
+    setIsEditing(false)
+  }
+
+  return (
+    <>
+      <Button onClick={() => navigate('/users')} style={{margin:'50px', width:'200px', height:'50px'}}>
+        Вернуться
+      </Button>
+      <div className="page">
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleSubmit}
+        >
+            <Form.Item
+              name="username"
+              label="Имя пользователя"
+              rules={USERNAME_RULES}
+              validateTrigger="onBlur"
+            >
+            {
+                isEditing?(
+                    <Input />
+                ):(    
+                    <Text> {userProfile?.username}</Text>
+                )
+            }
+          </Form.Item>
+
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={EMAIL_RULES}
+            validateTrigger="onBlur"
+          >
+            {
+                isEditing?(
+                    <Input />
+                ):(
+                    <Text> {userProfile?.email} </Text>
+                )
+            }
+          </Form.Item>
+
+          <Form.Item
+            name="phoneNumber"
+            label="Номер телефона"
+            rules={PHONE_RULES}
+            validateTrigger="onBlur"
+          >
+             {
+                isEditing?(
+                    <Input placeholder={isEditing ? '' : 'Отсутствует'} />
+                ):(
+                    <Text> {userProfile?.phoneNumber} </Text>
+                )
+            }
+          </Form.Item>
+
+          <Space>
+            {isEditing ? (
+              <>
+                <Button type="primary" htmlType="submit" onClick={()=>setIsEditing(false)}>
+                  Сохранить
+                </Button>
+                <Button onClick={handleCancel}>
+                  Отмена
+                </Button>
+              </>
+            ) : (
+              <Button onClick={() => 
+                {
+                    setIsEditing(true)                    
+                }}>
+                Редактировать
+              </Button>
+            )}
+          </Space>
+        </Form>
+      </div>
+    </>
+  )
 }
