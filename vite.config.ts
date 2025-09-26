@@ -6,9 +6,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': '/src',
-      '@/api': '/src/api',
-      '@/types': '/src/types',
-      '@/pages':'/src/pages'
     }
   }
 })

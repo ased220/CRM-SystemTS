@@ -76,6 +76,7 @@ export default function UserPage() {
         <Form
           form={form}
           layout="vertical"
+          initialValues={userProfile as UserRequest}
           onFinish={handleSubmit}
         >
             <Form.Item
