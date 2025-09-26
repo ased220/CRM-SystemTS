@@ -1,0 +1,1 @@
+export const baseURL = 'https://easydev.club/api/v1';

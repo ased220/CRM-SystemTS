@@ -1,13 +1,14 @@
 import axios from "axios";
 import { authService } from "../constants/authService";
 import type { AuthData, Profile, Token, UserRegistration } from "../types/authInterface";
+import { baseURL } from "../constants/path";
 
-const baseURL = 'https://easydev.club/api/v1';
+
 const baseApi = axios.create({
   baseURL: baseURL,
 })
 
-const profileApi = axios.create({
+export const profileApi = axios.create({
   baseURL: baseURL,
 })
 
@@ -25,29 +26,39 @@ profileApi.interceptors.request.use(
 );
 
 export async function registrationRequest(userData: UserRegistration) {
-      try {
-          const response = await baseApi.post('/auth/signup', userData);
-          return response.status
-      }catch(error){
-          if (error && typeof error === 'object' && 'status' in error) {
-              return (error as { status: number }).status;
-          }
-          return 404;
-      }
+    try {
+        const response = await baseApi.post('/auth/signup', userData);
+        return response.status
+    }catch(error){
+        if (error && typeof error === 'object' && 'status' in error) {
+            return (error as { status: number }).status;
+        }
+        return 404;
+    }
 }
 
 
 export async function loginRequest(authData: AuthData){
     
-        const response = await baseApi.post('/auth/signin',authData);
-        return {data: response.data, status: response.status};
+    const response = await baseApi.post('/auth/signin',authData);
     
+    return {data: response.data, status: response.status};
+
 }
 
+
+                
+let abortController: AbortController | null = null;
 export async function refreshTokenUpdateRequest(refToken: string){
+  if (abortController) {
+      abortController.abort(); 
+  } 
+  abortController = new AbortController();
+
   try {
     const response = await baseApi.post<Token>('/auth/refresh', { 
-      refreshToken: refToken 
+      refreshToken: refToken,
+      signal: abortController.signal 
     });
 
     return response.data;
@@ -58,6 +69,8 @@ export async function refreshTokenUpdateRequest(refToken: string){
           return (error as { status: number }).status;
       }
       return 404;  
+  }finally {
+      abortController = null;
   }
 }
 
@@ -65,6 +78,7 @@ export async function refreshTokenUpdateRequest(refToken: string){
 export const ProfileRequest = async(): Promise<Profile | Error> =>{
   try {
     const response = await profileApi.get('/user/profile');    
+    
     return response.data
 
   } catch (error:any) {    

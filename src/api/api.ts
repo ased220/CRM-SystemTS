@@ -1,7 +1,7 @@
 import type { MetaResponse, Todo, TodoInfo, TodoInfoCheck, TodoRequest, } from "../types/todoInterface"
 import axios from 'axios';
 
-const baseApi = axios.create({
+export const baseApi = axios.create({
   baseURL: 'https://easydev.club/api/v1',
 })
 
